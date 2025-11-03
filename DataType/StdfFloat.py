@@ -1,46 +1,67 @@
 import struct
+from typing import TypeVar
 from .StdfBase import StdfDataBase
+from functools import cached_property
 
-class R_4(StdfDataBase[float]):
+T = TypeVar("T", bound=float)
+
+
+class StdfFloatBase(StdfDataBase[float]):
+    """STDF Float Data Type Base Class"""
+
+    # STDF code to struct format mapping
+    _CODE_TO_FMT: dict[str, str] = {
+        "R*4": "f",  # float
+        "R*8": "d",  # double
+    }
+
+    @cached_property
+    def fmt(self) -> str:
+        fmt_code = self._CODE_TO_FMT.get(self._code, None)
+        if fmt_code is None:
+            raise ValueError(
+                f"Unsupported float type code: {self._code}. Supported codes: {list(self._CODE_TO_FMT.keys())}"
+            )
+        return self.ENDIAN + fmt_code
+
+    def _build_py(self, py_value: float) -> bytes:
+        # Validate py_value type
+        if not isinstance(py_value, (float, int)):
+            raise TypeError(f"Expected float or int, got {type(py_value)}")
+
+        try:
+            return struct.pack(self.fmt, float(py_value))
+        except struct.error as e:
+            raise ValueError(f"Failed to pack {py_value} as {self._code}: {e}")
+
+    def _parse_py(self) -> float:
+        try:
+            return struct.unpack(self.fmt, self.internal_bytes)[0]
+        except struct.error as e:
+            raise ValueError(
+                f"Failed to unpack {self.internal_bytes.hex()} as {self._code}: {e}"
+            )
+
+    def _build_stdf(self, stdf_bytes: bytes) -> bytes:
+        return stdf_bytes
+
+    def _parse_stdf(self) -> bytes:
+        return self.internal_bytes
+
+
+class R_4(StdfFloatBase):
     def __init__(self):
-        super().__init__(code="R*4", description="Four byte floating point number (IEEE 754)", bytes_len=4)
+        super().__init__(
+            code="R*4",
+            description="Four byte floating point number (IEEE 754)",
+            bytes_len=4,
+        )
 
-    def _validate_py_value(self, py_value: str) -> bool:
-        return super()._validate_py_value(py_value)
-    
-    def _build_c_from_py(self, py_value: str) -> bytes:
-        return super()._build_c_from_py(py_value)
-    
-    def _parse_c_to_py(self) -> str:
-        return super()._parse_c_to_py()
-    
-    def _validate_stdf_value(self, stdf_value: bytes) -> bool:
-        return super()._validate_stdf_value(stdf_value)
-    
-    def _build_c_from_stdf(self, stdf_value: bytes) -> bytes:
-        return super()._build_c_from_stdf(stdf_value)
-    
-    def _parse_c_to_stdf(self) -> bytes:
-        return super()._parse_c_to_stdf()
 
-class R_8(StdfDataBase[float]):
+class R_8(StdfFloatBase):
     def __init__(self):
-        super().__init__(code="R*8", description="Eight byte floating point number (IEEE 754)", bytes_len=8)
-
-    def _validate_py_value(self, py_value: str) -> bool:
-        return super()._validate_py_value(py_value)
-    
-    def _build_c_from_py(self, py_value: str) -> bytes:
-        return super()._build_c_from_py(py_value)
-    
-    def _parse_c_to_py(self) -> str:
-        return super()._parse_c_to_py()
-    
-    def _validate_stdf_value(self, stdf_value: bytes) -> bool:
-        return super()._validate_stdf_value(stdf_value)
-    
-    def _build_c_from_stdf(self, stdf_value: bytes) -> bytes:
-        return super()._build_c_from_stdf(stdf_value)
-    
-    def _parse_c_to_stdf(self) -> bytes:
-        return super()._parse_c_to_stdf()
+        super().__init__(
+            code="R*8",
+            description="Eight byte floating point number (IEEE 754)",
+            bytes_len=8,
+        )
