@@ -74,6 +74,28 @@ class C_n(StdfStringBase):
         return self.internal_bytes.decode("ASCII")
 
 
+class C_1(StdfStringBase):
+    """
+    Fixed-length character string (C*1).
+    """
+
+    def __init__(self):
+        super().__init__(
+            code="C*1",
+            description="Fixed-length character string",
+            bytes_len=1,
+        )
+
+    def _build_py(self, py_value: str) -> bytes:
+        self._validate_py_value(py_value)
+        if len(py_value) != 1:
+            raise ValueError("C*1 string must be exactly 1 character long")
+        return py_value.encode("ASCII")
+
+    def _parse_py(self) -> str:
+        return self.internal_bytes.decode("ASCII")
+
+
 class C_12(StdfStringBase):
     """
     Fixed-length character string (C*12). Left-justified, padded with spaces.
