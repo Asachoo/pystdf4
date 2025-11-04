@@ -111,15 +111,22 @@ class StdfRecordBase(abc.ABC):
 
     @property
     def data_bytes(self) -> bytes:
-        data_bytes = bytearray()
+        data_bytes = []
         for field_name in self.__annotations__:
-            field_value: StdfDataBase = getattr(self, field_name)
+            field_value = getattr(self, field_name)
             try:
-                data_bytes += field_value.stdf_value
-            except ValueError as e:
-                e.args = (f"Invalid value for {field_name}: {field_value}",)
+                if isinstance(field_value, StdfDataBase):
+                    data_bytes.append(field_value.stdf_value)
+                elif isinstance(field_value, list):
+                    for item in field_value:
+                        item: StdfDataBase
+                        data_bytes.append(item.stdf_value)
+            except Exception as e:
+                e.args = (
+                    f"{self.__class__.__name__} Invalid value for {field_name}: {field_value}",
+                )
                 raise e
-        return data_bytes
+        return b"".join(data_bytes)
 
     @property
     def stdf_bytes(self) -> bytes:
