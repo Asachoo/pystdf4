@@ -1,8 +1,11 @@
+from dataclasses import dataclass
+
 from pystdf4.DataType.StdfChar import C_n
 from pystdf4.DataType.StdfInteger import U_1, U_4
 from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
+@dataclass
 @register_record(0, 10)
 class FAR(StdfRecordBase):
     """
@@ -20,6 +23,7 @@ class FAR(StdfRecordBase):
     STDF_VER: U_1 = U_1()
 
 
+@dataclass
 @register_record(0, 20)
 class ATR(StdfRecordBase):
     """

@@ -1,8 +1,11 @@
+from dataclasses import dataclass, field
+
 from pystdf4.DataType.StdfChar import C_1, C_n
 from pystdf4.DataType.StdfInteger import U_1, U_2, U_4
 from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
+@dataclass
 @register_record(1, 10)
 class MIR(StdfRecordBase):
     """
@@ -92,6 +95,7 @@ class MIR(StdfRecordBase):
     SUPR_NAM: C_n = C_n()
 
 
+@dataclass
 @register_record(1, 20)
 class MRR(StdfRecordBase):
     """
@@ -113,6 +117,7 @@ class MRR(StdfRecordBase):
     EXC_DESC: C_n = C_n()
 
 
+@dataclass
 @register_record(1, 30)
 class PCR(StdfRecordBase):
     """
@@ -140,6 +145,7 @@ class PCR(StdfRecordBase):
     FUNC_CNT: U_4 = U_4()
 
 
+@dataclass
 @register_record(1, 40)
 class HBR(StdfRecordBase):
     """
@@ -165,6 +171,7 @@ class HBR(StdfRecordBase):
     HBIN_NAM: C_n = C_n()
 
 
+@dataclass
 @register_record(1, 50)
 class SBR(StdfRecordBase):
     """
@@ -190,6 +197,7 @@ class SBR(StdfRecordBase):
     SBIN_NAM: C_n = C_n()
 
 
+@dataclass
 @register_record(1, 60)
 class PMR(StdfRecordBase):
     """
@@ -217,6 +225,7 @@ class PMR(StdfRecordBase):
     SITE_NUM: U_1 = U_1()
 
 
+@dataclass
 @register_record(1, 62)
 class PGR(StdfRecordBase):
     """
@@ -237,9 +246,10 @@ class PGR(StdfRecordBase):
     # Count (k) of PMR indexes
     INDX_CNT: U_2 = U_2()
     # Array of indexes for pins in the group
-    PMR_INDX: list[U_2] = []
+    PMR_INDX: list[U_2] = field(default_factory=list)
 
 
+@dataclass
 @register_record(1, 63)
 class PLR(StdfRecordBase):
     """
@@ -256,21 +266,22 @@ class PLR(StdfRecordBase):
     # Count (k) of pins or pin groups
     GRP_CNT: U_2 = U_2()
     # Array of pin or pin group indexes
-    GRP_INDX: list[U_2] = []
+    GRP_INDX: list[U_2] = field(default_factory=list)
     # Operating mode of pin group
-    GRP_MODE: list[U_2] = []
+    GRP_MODE: list[U_2] = field(default_factory=list)
     # Display radix of pin group
-    GRP_RADX: list[U_1] = []
+    GRP_RADX: list[U_1] = field(default_factory=list)
     # Program state encoding characters
-    PGM_CHAR: list[C_n] = []
+    PGM_CHAR: list[C_n] = field(default_factory=list)
     # Return state encoding characters
-    RTN_CHAR: list[C_n] = []
+    RTN_CHAR: list[C_n] = field(default_factory=list)
     # Program state encoding characters
-    PGM_CHAL: list[C_n] = []
+    PGM_CHAL: list[C_n] = field(default_factory=list)
     # Return state encoding characters
-    RTN_CHAL: list[C_n] = []
+    RTN_CHAL: list[C_n] = field(default_factory=list)
 
 
+@dataclass
 @register_record(1, 70)
 class RDR(StdfRecordBase):
     """
@@ -287,9 +298,10 @@ class RDR(StdfRecordBase):
     # Number (k) of bins being retested
     NUM_BINS: U_2 = U_2()
     # Array of retest bin numbers
-    RTST_BIN: list[U_2] = []
+    RTST_BIN: list[U_2] = field(default_factory=list)
 
 
+@dataclass
 @register_record(1, 80)
 class SDR(StdfRecordBase):
     """
@@ -308,7 +320,7 @@ class SDR(StdfRecordBase):
     # Number of test sites in site group
     SITE_CNT: U_1 = U_1()
     # Array of test site numbers
-    SITE_NUM: list[U_1] = []
+    SITE_NUM: list[U_1] = field(default_factory=list)
     # Handler or prober type
     HAND_TYP: C_n = C_n()
     # Handler or prober ID

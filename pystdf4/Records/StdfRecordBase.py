@@ -52,17 +52,6 @@ class StdfRecordBase(abc.ABC):
 
     # region Magic Methods
 
-    def __init__(self, rec_typ=None, rec_sub=None):
-        """
-        Initialize a StdfRecordBase instance.
-
-        Args:
-            rec_typ (int, optional): Record type override. Defaults to the class-level REC_TYP.
-            rec_sub (int, optional): Record subtype override. Defaults to the class-level REC_SUB.
-        """
-        self.REC_TYP: int = rec_typ or self.REC_TYP
-        self.REC_SUB: int = rec_sub or self.REC_SUB
-
     def __setattr__(self, name: str, value: object) -> None:
         """
         Override attribute assignment to update the py_value of
@@ -73,9 +62,11 @@ class StdfRecordBase(abc.ABC):
             value (object): Attribute value.
         """
         attr: StdfDataBase | None = getattr(self, name, None)
-
         if isinstance(attr, StdfDataBase):
-            attr.py_value = value
+            if isinstance(value, StdfDataBase):
+                attr = value
+            else:
+                attr.py_value = value
         else:
             super().__setattr__(name, value)
 
@@ -109,7 +100,10 @@ class StdfRecordBase(abc.ABC):
         if key in _RECORD_REGISTRY:
             record_cls = _RECORD_REGISTRY[key]
             return record_cls()
-        return cls(rec_typ=rec_typ, rec_sub=rec_sub)
+        obj = cls()
+        obj.REC_TYP = rec_typ
+        obj.REC_SUB = rec_sub
+        return obj
 
     # endregion
 

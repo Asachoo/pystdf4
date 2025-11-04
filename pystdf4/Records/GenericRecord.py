@@ -1,8 +1,11 @@
+from dataclasses import dataclass
+
 from pystdf4.DataType.StdfChar import C_n
 from pystdf4.DataType.StdfInteger import U_2
 from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
+@dataclass
 @register_record(50, 10)
 class GDR(StdfRecordBase):
     """
@@ -22,6 +25,7 @@ class GDR(StdfRecordBase):
     # GEN_DATA: V_n =V_n()
 
 
+@dataclass
 @register_record(50, 30)
 class DTR(StdfRecordBase):
     """

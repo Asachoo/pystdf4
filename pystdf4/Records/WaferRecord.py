@@ -1,9 +1,12 @@
+from dataclasses import dataclass
+
 from pystdf4.DataType.StdfChar import C_1, C_n
 from pystdf4.DataType.StdfInteger import U_1, U_4, I_2
 from pystdf4.DataType.StdfFloat import R_4
 from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
+@dataclass
 @register_record(2, 10)
 class WIR(StdfRecordBase):
     """
@@ -25,6 +28,7 @@ class WIR(StdfRecordBase):
     WAFER_ID: C_n = C_n()
 
 
+@dataclass
 @register_record(2, 20)
 class WRR(StdfRecordBase):
     """
@@ -66,6 +70,7 @@ class WRR(StdfRecordBase):
     EXC_DESC: C_n = C_n()
 
 
+@dataclass
 @register_record(2, 30)
 class WCR(StdfRecordBase):
     """
