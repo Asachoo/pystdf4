@@ -65,6 +65,7 @@ class C_1(StdfStringBase):
         super().__init__(
             code="C*1",
             description="Fixed-length character string",
+            missing_default=" ",
         )
 
 
@@ -79,4 +80,5 @@ class C_n(StdfStringBase):
             code="C*n",
             description="Variable-length character string",
             max_len=255,
+            missing_default="",
         )

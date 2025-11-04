@@ -76,6 +76,7 @@ class U_1(StdfIntBase):
         super().__init__(
             code="U*1",
             description="One byte unsigned integer",
+            missing_default=0,
         )
 
 
@@ -84,6 +85,7 @@ class U_2(StdfIntBase):
         super().__init__(
             code="U*2",
             description="Two byte unsigned integer",
+            missing_default=0,
         )
 
 
@@ -92,6 +94,7 @@ class U_4(StdfIntBase):
         super().__init__(
             code="U*4",
             description="Four byte unsigned integer",
+            missing_default=0,
         )
 
 
@@ -101,6 +104,7 @@ class I_1(StdfIntBase):
         super().__init__(
             code="I*1",
             description="One byte signed integer",
+            missing_default=0,
         )
 
 
@@ -109,6 +113,7 @@ class I_2(StdfIntBase):
         super().__init__(
             code="I*2",
             description="Two byte signed integer",
+            missing_default=0,
         )
 
 
@@ -117,4 +122,5 @@ class I_4(StdfIntBase):
         super().__init__(
             code="I*4",
             description="Four byte signed integer",
+            missing_default=0,
         )
