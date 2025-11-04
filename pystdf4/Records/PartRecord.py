@@ -12,16 +12,20 @@ class PIR(StdfRecordBase):
     """
     Part Information Record (PIR)
 
-    Marks the beginning of test data for an individual part.
+    Function: Acts as a marker to indicate where testing of a particular part begins for each part tested by the test program. The PIR and the Part Results Record (PRR) bracket all the stored information pertaining to one tested part.
     """
 
     REC_TYP = 5
     REC_SUB = 10
 
-    # Test head number
     HEAD_NUM: UInt8 = U_1()
-    # Test site number
+    """
+    Test head number
+    """
     SITE_NUM: UInt8 = U_1()
+    """
+    Test site number
+    """
 
 
 @dataclass
@@ -30,33 +34,57 @@ class PRR(StdfRecordBase):
     """
     Part Results Record (PRR)
 
-    Contains test results for an individual part.
+    Function: Contains the result information relating to each part tested by the test program. The PRR and the Part Information Record (PIR) bracket all the stored information pertaining to one tested part.
     """
 
     REC_TYP = 5
     REC_SUB = 20
 
-    # Test head number
     HEAD_NUM: UInt8 = U_1()
-    # Test site number
+    """
+    Test head number
+    """
     SITE_NUM: UInt8 = U_1()
-    # Part information flag
+    """
+    Test site number
+    """
     PART_FLG: BinarySingle = B_1()
-    # Number of tests executed
+    """
+    Part information flag
+    """
     NUM_TEST: UInt16 = U_2()
-    # Hardware bin number
+    """
+    Number of tests executed
+    """
     HARD_BIN: UInt16 = U_2()
-    # Software bin number
+    """
+    Hardware bin number
+    """
     SOFT_BIN: UInt16 = U_2()
-    # (Wafer) X coordinate
+    """
+    Software bin number
+    """
     X_COORD: Int16 = I_2()
-    # (Wafer) Y coordinate
+    """
+    (Wafer) X coordinate
+    """
     Y_COORD: Int16 = I_2()
-    # Elapsed test time in milliseconds
+    """
+    (Wafer) Y coordinate
+    """
     TEST_T: UInt32 = U_4()
-    # Part identification
+    """
+    Elapsed test time in milliseconds
+    """
     PART_ID: CharVarLen = C_n()
-    # Part description text
+    """
+    Part identification
+    """
     PART_TXT: CharVarLen = C_n()
-    # Part repair information
+    """
+    Part description text
+    """
     PART_FIX: BinaryVarLen = B_n()
+    """
+    Part repair information
+    """

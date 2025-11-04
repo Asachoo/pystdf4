@@ -11,14 +11,16 @@ class BPS(StdfRecordBase):
     """
     Begin Program Section Record (BPS)
 
-    Marks the beginning of a program section or sequencer segment.
+    Function: Marks the beginning of a new program section (or sequencer) in the job plan.
     """
 
     REC_TYP = 20
     REC_SUB = 10
 
-    # Program section (or sequencer) name
     SEQ_NAME: CharVarLen = C_n()
+    """
+    Program section (or sequencer) name
+    """
 
 
 @dataclass
@@ -27,7 +29,7 @@ class EPS(StdfRecordBase):
     """
     End Program Section Record (EPS)
 
-    Marks the end of a program section or sequencer segment.
+    Function: Marks the end of the current program section (or sequencer) in the job plan.
     """
 
     REC_TYP = 20

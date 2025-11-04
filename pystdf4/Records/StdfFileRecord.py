@@ -11,16 +11,20 @@ class FAR(StdfRecordBase):
     """
     File Attributes Record (FAR)
 
-    Describes global attributes for the STDF file.
+    Function: Contains the information necessary to determine how to decode the STDF data contained in the file.
     """
 
     REC_TYP = 0
     REC_SUB = 10
 
-    # CPU type that wrote this file
     CPU_TYPE: UInt8 = U_1()
-    # STDF version number
+    """
+    CPU type that wrote this file
+    """
     STDF_VER: UInt8 = U_1()
+    """
+    STDF version number
+    """
 
 
 @dataclass
@@ -29,13 +33,17 @@ class ATR(StdfRecordBase):
     """
     Audit Trail Record (ATR)
 
-    Records actions or commands that modified the STDF file.
+    Function: Used to record any operation that alters the contents of the STDF file. The name of the program and all its parameters should be recorded in the ASCII field provided in this record. Typically, this record will be used to track filter programs that have been applied to the data.
     """
 
     REC_TYP = 0
     REC_SUB = 20
 
-    # Date and time of STDF file modification
     MOD_TIM: UInt32 = U_4()
-    # Command line of program
+    """
+    Date and time of STDF file modification
+    """
     CMD_LINE: CharVarLen = C_n()
+    """
+    Command line of program
+    """
