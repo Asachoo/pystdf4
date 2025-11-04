@@ -44,7 +44,7 @@ class StdfDataBase(abc.ABC, Generic[T]):
         Initialize a STDF data field.
 
         Args:
-            code: STDF type code (e.g., "C*12", "U*2", "I*4", "C*n").
+            code: STDF type code (e.g., "C*1", "U*2", "I*4", "C*n").
             description: Human-readable description of the field.
             bytes_len:
                 - For fixed-length types: actual byte length (1, 2, 4, 12, etc.)

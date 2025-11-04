@@ -1,4 +1,3 @@
-# DataType/StdfChar.py
 from typing import TypeVar
 from .StdfBase import StdfDataBase
 
@@ -23,6 +22,13 @@ class StdfStringBase(StdfDataBase[str]):
                 f"String too long ({encoded_length} > {self._bytes_len} bytes)"
             )
 
+    def _build_py(self, py_value: str) -> bytes:
+        self._validate_py_value(py_value)
+        return py_value.encode("ASCII")
+
+    def _parse_py(self) -> str:
+        return self.internal_bytes.decode("ASCII")
+
     def _build_stdf(self, stdf_bytes: bytes) -> bytes:
         if self._code == "C*n":
             length_byte = stdf_bytes[0]
@@ -31,7 +37,7 @@ class StdfStringBase(StdfDataBase[str]):
                 raise ValueError("Invalid length prefix in C*n data")
             return data_bytes
         elif self._code.startswith("C*") and "*" in self._code[1:]:
-            # Fixed-length strings like C*12
+            # Fixed-length strings like C*1
             expected_length = int(self._code.split("*")[1])
             if len(stdf_bytes) != expected_length:
                 raise ValueError(f"Expected {expected_length} bytes for {self._code}")
@@ -53,27 +59,6 @@ class StdfStringBase(StdfDataBase[str]):
             raise NotImplementedError(f"Unsupported string type: {self._code}")
 
 
-class C_n(StdfStringBase):
-    """
-    Variable-length character string (C*n).
-    First byte = unsigned count of bytes to follow (max 255).
-    """
-
-    def __init__(self):
-        super().__init__(
-            code="C*n",
-            description="Variable-length character string",
-            max_len=255,
-        )
-
-    def _build_py(self, py_value: str) -> bytes:
-        self._validate_py_value(py_value)
-        return py_value.encode("ASCII")
-
-    def _parse_py(self) -> str:
-        return self.internal_bytes.decode("ASCII")
-
-
 class C_1(StdfStringBase):
     """
     Fixed-length character string (C*1).
@@ -86,34 +71,16 @@ class C_1(StdfStringBase):
             bytes_len=1,
         )
 
-    def _build_py(self, py_value: str) -> bytes:
-        self._validate_py_value(py_value)
-        if len(py_value) != 1:
-            raise ValueError("C*1 string must be exactly 1 character long")
-        return py_value.encode("ASCII")
 
-    def _parse_py(self) -> str:
-        return self.internal_bytes.decode("ASCII")
-
-
-class C_12(StdfStringBase):
+class C_n(StdfStringBase):
     """
-    Fixed-length character string (C*12). Left-justified, padded with spaces.
+    Variable-length character string (C*n).
+    First byte = unsigned count of bytes to follow (max 255).
     """
 
     def __init__(self):
         super().__init__(
-            code="C*12",
-            description="Fixed-length character string",
-            bytes_len=12,
+            code="C*n",
+            description="Variable-length character string",
+            max_len=255,
         )
-
-    def _build_py(self, py_value: str) -> bytes:
-        self._validate_py_value(py_value)
-        # Left-justify and pad with spaces
-        padded = py_value.ljust(12)[:12]  # Truncate if longer than 12
-        return padded.encode("ASCII")
-
-    def _parse_py(self) -> str:
-        # Right-strip spaces for clean output
-        return self.internal_bytes.decode("ASCII").rstrip(" ")
