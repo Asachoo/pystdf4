@@ -1,3 +1,5 @@
+from dataclasses import field, dataclass
+
 from pystdf4.DataType.StdfBinary import B_n, B_1
 from pystdf4.DataType.StdfChar import C_n
 from pystdf4.DataType.StdfInteger import U_1, U_2, U_4, I_1, I_2, I_4
@@ -5,6 +7,7 @@ from pystdf4.DataType.StdfFloat import R_4
 from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
+@dataclass
 @register_record(15, 10)
 class PTR(StdfRecordBase):
     """
@@ -58,6 +61,7 @@ class PTR(StdfRecordBase):
     HI_SPEC: R_4 = R_4()
 
 
+@dataclass
 @register_record(15, 15)
 class MPR(StdfRecordBase):
     """
@@ -86,9 +90,9 @@ class MPR(StdfRecordBase):
     # Count (k) of returned results
     RSLT_CNT: U_2 = U_2()
     # Array of returned states
-    RTN_STAT: list[B_n] = []
+    RTN_STAT: list[B_n] = field(default_factory=list)
     # Array of returned results
-    RTN_RSLT: list[R_4] = []
+    RTN_RSLT: list[R_4] = field(default_factory=list)
     # Descriptive text or label
     TEST_TXT: C_n = C_n()
     # Name of alarm
@@ -110,7 +114,7 @@ class MPR(StdfRecordBase):
     # Increment of input condition
     INCR_IN: R_4 = R_4()
     # Array of PMR indexes
-    RTN_INDX: list[U_2] = []
+    RTN_INDX: list[U_2] = field(default_factory=list)
     # Units of returned results
     UNITS: C_n = C_n()
     # Input condition units
@@ -127,6 +131,7 @@ class MPR(StdfRecordBase):
     HI_SPEC: R_4 = R_4()
 
 
+@dataclass
 @register_record(15, 20)
 class FTR(StdfRecordBase):
     """
@@ -169,13 +174,13 @@ class FTR(StdfRecordBase):
     # Count (k) of programmed state indexes
     PGM_ICNT: U_2 = U_2()
     # Array of return data PMR indexes
-    RTN_INDX: list[U_2] = []
+    RTN_INDX: list[U_2] = field(default_factory=list)
     # Array of returned states
-    RTN_STAT: list[B_n] = []
+    RTN_STAT: list[B_n] = field(default_factory=list)
     # Array of programmed state indexes
-    PGM_INDX: list[U_2] = []
+    PGM_INDX: list[U_2] = field(default_factory=list)
     # Array of programmed states
-    PGM_STAT: list[B_n] = []
+    PGM_STAT: list[B_n] = field(default_factory=list)
     # Failing pin bitfield
     FAIL_PIN: B_n = B_n()
     # Vector module pattern name

@@ -1,9 +1,12 @@
+from dataclasses import dataclass
+
 from pystdf4.DataType.StdfBinary import B_n, B_1
 from pystdf4.DataType.StdfChar import C_n
 from pystdf4.DataType.StdfInteger import U_1, U_2, U_4, I_2
 from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
+@dataclass
 @register_record(5, 10)
 class PIR(StdfRecordBase):
     """
@@ -21,6 +24,7 @@ class PIR(StdfRecordBase):
     SITE_NUM: U_1 = U_1()
 
 
+@dataclass
 @register_record(5, 20)
 class PRR(StdfRecordBase):
     """

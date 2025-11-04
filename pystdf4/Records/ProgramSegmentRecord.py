@@ -1,7 +1,10 @@
+from dataclasses import dataclass
+
 from pystdf4.DataType.StdfChar import C_n
 from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
+@dataclass
 @register_record(20, 10)
 class BPS(StdfRecordBase):
     """
@@ -17,6 +20,7 @@ class BPS(StdfRecordBase):
     SEQ_NAME: C_n = C_n()
 
 
+@dataclass
 @register_record(20, 20)
 class EPS(StdfRecordBase):
     """
