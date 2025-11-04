@@ -12,52 +12,92 @@ class PTR(StdfRecordBase):
     """
     Parametric Test Record (PTR)
 
-    Contains results for a single execution of a parametric test.
+    Function: Contains the results of a single execution of a parametric test in the test program. The first occurrence of this record also establishes the default values for all semi-static information about the test, such as limits, units, and scaling. The PTR is related to the Test Synopsis Record (TSR) by test number, head number, and site number.
     """
 
     REC_TYP = 15
     REC_SUB = 10
 
-    # Test number
     TEST_NUM: UInt32 = U_4()
-    # Test head number
+    """
+    Test number
+    """
     HEAD_NUM: UInt8 = U_1()
-    # Test site number
+    """
+    Test head number
+    """
     SITE_NUM: UInt8 = U_1()
-    # Test flags (fail, alarm, etc.)
+    """
+    Test site number
+    """
     TEST_FLG: BinarySingle = B_1()
-    # Parametric test flags (drift, etc.)
+    """
+    Test flags (fail, alarm, etc.)
+    """
     PARM_FLG: BinarySingle = B_1()
-    # Test result
+    """
+    Parametric test flags (drift, etc.)
+    """
     RESULT: Float32 = R_4()
-    # Test description text or label
+    """
+    Test result
+    """
     TEST_TXT: CharVarLen = C_n()
-    # Name of alarm
+    """
+    Test description text or label
+    """
     ALARM_ID: CharVarLen = C_n()
-    # Optional data flag
+    """
+    Name of alarm
+    """
     OPT_FLAG: BinarySingle = B_1()
-    # Test results scaling exponent
+    """
+    Optional data flag
+    """
     RES_SCAL: Int8 = I_1()
-    # Low limit scaling exponent
+    """
+    Test results scaling exponent
+    """
     LLM_SCAL: Int8 = I_1()
-    # High limit scaling exponent
+    """
+    Low limit scaling exponent
+    """
     HLM_SCAL: Int8 = I_1()
-    # Low test limit value
+    """
+    High limit scaling exponent
+    """
     LO_LIMIT: Float32 = R_4()
-    # High test limit value
+    """
+    Low test limit value
+    """
     HI_LIMIT: Float32 = R_4()
-    # Test units
+    """
+    High test limit value
+    """
     UNITS: CharVarLen = C_n()
-    # ANSI C result format string
+    """
+    Test units
+    """
     C_RESFMT: CharVarLen = C_n()
-    # ANSI C low limit format string
+    """
+    ANSI C result format string
+    """
     C_LLMFMT: CharVarLen = C_n()
-    # ANSI C high limit format string
+    """
+    ANSI C low limit format string
+    """
     C_HLMFMT: CharVarLen = C_n()
-    # Low specification limit value
+    """
+    ANSI C high limit format string
+    """
     LO_SPEC: Float32 = R_4()
-    # High specification limit value
+    """
+    Low specification limit value
+    """
     HI_SPEC: Float32 = R_4()
+    """
+    High specification limit value
+    """
 
 
 @dataclass
@@ -66,7 +106,7 @@ class MPR(StdfRecordBase):
     """
     Multiple-Result Parametric Record (MPR)
 
-    Contains results for a parametric test that returns multiple values.
+    Function: Contains the results of a single execution of a parametric test in the test program where that test returns multiple values. The first occurrence of this record also establishes the default values for all semi-static information about the test, such as limits, units, and scaling. The MPR is related to the Test Synopsis Record (TSR) by test number, head number, and site number.
     """
 
     REC_TYP = 15
@@ -74,60 +114,114 @@ class MPR(StdfRecordBase):
 
     # TODO: Implement RTN_STAT, RTN_RSLT, RTN_INDX
 
-    # Test number
     TEST_NUM: UInt32 = U_4()
-    # Test head number
+    """
+    Test number
+    """
     HEAD_NUM: UInt8 = U_1()
-    # Test site number
+    """
+    Test head number
+    """
     SITE_NUM: UInt8 = U_1()
-    # Test flags (fail, alarm, etc.)
+    """
+    Test site number
+    """
     TEST_FLG: BinarySingle = B_1()
-    # Parametric test flags (drift, etc.)
+    """
+    Test flags (fail, alarm, etc.)
+    """
     PARM_FLG: BinarySingle = B_1()
-    # Count (j) of PMR indexes
+    """
+    Parametric test flags (drift, etc.)
+    """
     RTN_ICNT: UInt16 = U_2()
-    # Count (k) of returned results
+    """
+    Count (j) of PMR indexes
+    """
     RSLT_CNT: UInt16 = U_2()
-    # Array of returned states
+    """
+    Count (k) of returned results
+    """
     RTN_STAT: list[B_n] = field(default_factory=list)
-    # Array of returned results
+    """
+    Array of returned states
+    """
     RTN_RSLT: list[R_4] = field(default_factory=list)
-    # Descriptive text or label
+    """
+    Array of returned results
+    """
     TEST_TXT: CharVarLen = C_n()
-    # Name of alarm
+    """
+    Descriptive text or label
+    """
     ALARM_ID: CharVarLen = C_n()
-    # Optional data flag
+    """
+    Name of alarm
+    """
     OPT_FLAG: BinarySingle = B_1()
-    # Test result scaling exponent
+    """
+    Optional data flag
+    """
     RES_SCAL: Int8 = I_1()
-    # Test low limit scaling exponent
+    """
+    Test result scaling exponent
+    """
     LLM_SCAL: Int8 = I_1()
-    # Test high limit scaling exponent
+    """
+    Test low limit scaling exponent
+    """
     HLM_SCAL: Int8 = I_1()
-    # Test low limit value
+    """
+    Test high limit scaling exponent
+    """
     LO_LIMIT: Float32 = R_4()
-    # Test high limit value
+    """
+    Test low limit value
+    """
     HI_LIMIT: Float32 = R_4()
-    # Starting input value (condition)
+    """
+    Test high limit value
+    """
     START_IN: Float32 = R_4()
-    # Increment of input condition
+    """
+    Starting input value (condition)
+    """
     INCR_IN: Float32 = R_4()
-    # Array of PMR indexes
+    """
+    Increment of input condition
+    """
     RTN_INDX: list[U_2] = field(default_factory=list)
-    # Units of returned results
+    """
+    Array of PMR indexes
+    """
     UNITS: CharVarLen = C_n()
-    # Input condition units
+    """
+    Units of returned results
+    """
     UNITS_IN: CharVarLen = C_n()
-    # ANSI C result format string
+    """
+    Input condition units
+    """
     C_RESFMT: CharVarLen = C_n()
-    # ANSI C low limit format string
+    """
+    ANSI C result format string
+    """
     C_LLMFMT: CharVarLen = C_n()
-    # ANSI C high limit format string
+    """
+    ANSI C low limit format string
+    """
     C_HLMFMT: CharVarLen = C_n()
-    # Low specification limit value
+    """
+    ANSI C high limit format string
+    """
     LO_SPEC: Float32 = R_4()
-    # High specification limit value
+    """
+    Low specification limit value
+    """
     HI_SPEC: Float32 = R_4()
+    """
+    High specification limit value
+    """
 
 
 @dataclass
@@ -136,7 +230,7 @@ class FTR(StdfRecordBase):
     """
     Functional Test Record (FTR)
 
-    Contains results for a single execution of a functional test.
+    Function: Contains the results of the single execution of a functional test in the test program. The first occurrence of this record also establishes the default values for all semi-static information about the test. The FTR is related to the Test Synopsis Record (TSR) by test number, head number, and site number.
     """
 
     REC_TYP = 15
@@ -144,59 +238,115 @@ class FTR(StdfRecordBase):
 
     # TODO: Implement PTN_INDX, RTN_STAT, PGM_INDX, PGM_STAT
 
-    # Test number
     TEST_NUM: UInt32 = U_4()
-    # Test head number
+    """
+    Test number
+    """
     HEAD_NUM: UInt8 = U_1()
-    # Test site number
+    """
+    Test head number
+    """
     SITE_NUM: UInt8 = U_1()
-    # Test flags (fail, alarm, etc.)
+    """
+    Test site number
+    """
     TEST_FLG: BinarySingle = B_1()
-    # Optional data flag
+    """
+    Test flags (fail, alarm, etc.)
+    """
     OPT_FLAG: BinarySingle = B_1()
-    # Cycle count of vector
+    """
+    Optional data flag
+    """
     CYCL_CNT: UInt32 = U_4()
-    # Relative vector address
+    """
+    Cycle count of vector
+    """
     REL_VADR: UInt32 = U_4()
-    # Repeat count of vector
+    """
+    Relative vector address
+    """
     REPT_CNT: UInt32 = U_4()
-    # Number of pins with 1 or more failures
+    """
+    Repeat count of vector
+    """
     NUM_FAIL: UInt32 = U_4()
-    # X logical device failure address
+    """
+    Number of pins with 1 or more failures
+    """
     XFAIL_AD: Int32 = I_4()
-    # Y logical device failure address
+    """
+    X logical device failure address
+    """
     YFAIL_AD: Int32 = I_4()
-    # Offset from vector of interest
+    """
+    Y logical device failure address
+    """
     VECT_OFF: Int16 = I_2()
-    # Count (j) of return data PMR indexes
+    """
+    Offset from vector of interest
+    """
     RTN_ICNT: UInt16 = U_2()
-    # Count (k) of programmed state indexes
+    """
+    Count (j) of return data PMR indexes
+    """
     PGM_ICNT: UInt16 = U_2()
-    # Array of return data PMR indexes
+    """
+    Count (k) of programmed state indexes
+    """
     RTN_INDX: list[U_2] = field(default_factory=list)
-    # Array of returned states
+    """
+    Array of return data PMR indexes
+    """
     RTN_STAT: list[B_n] = field(default_factory=list)
-    # Array of programmed state indexes
+    """
+    Array of returned states
+    """
     PGM_INDX: list[U_2] = field(default_factory=list)
-    # Array of programmed states
+    """
+    Array of programmed state indexes
+    """
     PGM_STAT: list[B_n] = field(default_factory=list)
-    # Failing pin bitfield
+    """
+    Array of programmed states
+    """
     FAIL_PIN: BinaryVarLen = B_n()
-    # Vector module pattern name
+    """
+    Failing pin bitfield
+    """
     VECT_NAM: CharVarLen = C_n()
-    # Time set name
+    """
+    Vector module pattern name
+    """
     TIME_SET: CharVarLen = C_n()
-    # Vector Op Code
+    """
+    Time set name
+    """
     OP_CODE: CharVarLen = C_n()
-    # Descriptive text or label
+    """
+    Vector Op Code
+    """
     TEST_TXT: CharVarLen = C_n()
-    # Name of alarm
+    """
+    Descriptive text or label
+    """
     ALARM_ID: CharVarLen = C_n()
-    # Additional programmed information
+    """
+    Name of alarm
+    """
     PROG_TXT: CharVarLen = C_n()
-    # Additional result information
+    """
+    Additional programmed information
+    """
     RSLT_TXT: CharVarLen = C_n()
-    # Pattern generator number
+    """
+    Additional result information
+    """
     PATG_NUM: UInt8 = U_1()
-    # Bit map of enabled comparators
+    """
+    Pattern generator number
+    """
     SPIN_MAP: BinaryVarLen = B_n()
+    """
+    Bit map of enabled comparators
+    """
