@@ -21,7 +21,7 @@ Each type code corresponds to a C data type, defining the byte layout and valid 
 
 | Code     | Description                                   | C Type Specifier | Notes                                                                    |
 | :------- | :-------------------------------------------- | :--------------- | :----------------------------------------------------------------------- |
-| `C*12`   | Fixed-length character string (12 characters) | `char[12]`       | Left-justified; pad with spaces if shorter than 12 characters.           |
+| `C*1`    | Fixed-length character string (1 characters)  | `char[1]`        | Left-justified; pad with spaces if shorter than 12 characters.           |
 | `C*n`    | Variable-length character string              | `char[]`         | First byte stores the length (0–255).                                    |
 | `C*f`    | Variable-length string with external length   | `char[]`         | Length determined by another record field.                               |
 | `U*1`    | 1-byte unsigned integer                       | `unsigned char`  | Range: 0–255                                                             |
@@ -50,8 +50,8 @@ Each class encapsulates type conversion, byte parsing, and STDF serialization.
 StdfDataBase[T]  (Abstract Generic Base)
 ├── StdfIntBase     → U_1, U_2, U_4, I_1, I_2, I_4
 ├── StdfFloatBase   → R_4, R_8
-├── StdfStringBase  → C_n, C_12
-└── StdfBinaryBase  → B_n
+├── StdfStringBase  → C_1, C_n
+└── StdfBinaryBase  → B_1, B_n
 ```
 
 These classes standardize how data flows between **Python**, **C-style internal representations**, and **STDF binary data**.
@@ -86,26 +86,26 @@ This design ensures each data element can:
 | FAR         | File Attributes Record              | 0       | 10      | ✔️ Complete   | Required as first record        |
 | ATR         | Audit Trail Record                  | 0       | 20      | ✔️ Complete   | Tracks file modifications       |
 | MIR         | Master Information Record           | 1       | 10      | ✔️ Complete   | Lot-level information           |
-| MRR         | Master Results Record               | 1       | 20      | ❌ Incomplete | End of lot summary              |
-| PCR         | Part Count Record                   | 1       | 30      | ❌ Incomplete | Part statistics                 |
-| HBR         | Hardware Bin Record                 | 1       | 40      | ❌ Incomplete | Physical binning counts         |
-| SBR         | Software Bin Record                 | 1       | 50      | ❌ Incomplete | Logical binning counts          |
-| PMR         | Pin Map Record                      | 1       | 60      | ❌ Incomplete | Pin/channel mapping             |
+| MRR         | Master Results Record               | 1       | 20      | ✔️ Complete   | End of lot summary              |
+| PCR         | Part Count Record                   | 1       | 30      | ✔️ Complete   | Part statistics                 |
+| HBR         | Hardware Bin Record                 | 1       | 40      | ✔️ Complete   | Physical binning counts         |
+| SBR         | Software Bin Record                 | 1       | 50      | ✔️ Complete   | Logical binning counts          |
+| PMR         | Pin Map Record                      | 1       | 60      | ✔️ Complete   | Pin/channel mapping             |
 | PGR         | Pin Group Record                    | 1       | 62      | ❌ Incomplete | Pin grouping                    |
 | PLR         | Pin List Record                     | 1       | 63      | ❌ Incomplete | Pin group display properties    |
 | RDR         | Retest Data Record                  | 1       | 70      | ❌ Incomplete | Retest information              |
-| SDR         | Site Description Record             | 1       | 80      | ❌ Incomplete | Test site configuration         |
-| WIR         | Wafer Information Record            | 2       | 10      | ❌ Incomplete | Wafer start marker              |
-| WRR         | Wafer Results Record                | 2       | 20      | ❌ Incomplete | Wafer completion summary        |
-| WCR         | Wafer Configuration Record          | 2       | 30      | ❌ Incomplete | Wafer dimensions/orientation    |
-| PIR         | Part Information Record             | 5       | 10      | ❌ Incomplete | Part start marker               |
-| PRR         | Part Results Record                 | 5       | 20      | ❌ Incomplete | Part completion results         |
-| TSR         | Test Synopsis Record                | 10      | 30      | ❌ Incomplete | Test execution statistics       |
-| PTR         | Parametric Test Record              | 15      | 10      | ❌ Incomplete | Single parametric test result   |
+| SDR         | Site Description Record             | 1       | 80      | ✔️ Complete   | Test site configuration         |
+| WIR         | Wafer Information Record            | 2       | 10      | ✔️ Complete   | Wafer start marker              |
+| WRR         | Wafer Results Record                | 2       | 20      | ✔️ Complete   | Wafer completion summary        |
+| WCR         | Wafer Configuration Record          | 2       | 30      | ✔️ Complete   | Wafer dimensions/orientation    |
+| PIR         | Part Information Record             | 5       | 10      | ✔️ Complete   | Part start marker               |
+| PRR         | Part Results Record                 | 5       | 20      | ✔️ Complete   | Part completion results         |
+| TSR         | Test Synopsis Record                | 10      | 30      | ✔️ Complete   | Test execution statistics       |
+| PTR         | Parametric Test Record              | 15      | 10      | ✔️ Complete   | Single parametric test result   |
 | MPR         | Multiple-Result Parametric Record   | 15      | 15      | ❌ Incomplete | Multiple parametric test results|
 | FTR         | Functional Test Record              | 15      | 20      | ❌ Incomplete | Functional test results         |
-| BPS         | Begin Program Section Record        | 20      | 10      | ❌ Incomplete | Program section start marker    |
-| EPS         | End Program Section Record          | 20      | 20      | ❌ Incomplete | Program section end marker      |
+| BPS         | Begin Program Section Record        | 20      | 10      | ✔️ Complete   | Program section start marker    |
+| EPS         | End Program Section Record          | 20      | 20      | ✔️ Complete   | Program section end marker      |
 | GDR         | Generic Data Record                 | 50      | 10      | ❌ Incomplete | User-defined data               |
 | DTR         | Datalog Text Record                 | 50      | 30      | ❌ Incomplete | Datalog comments                |
 

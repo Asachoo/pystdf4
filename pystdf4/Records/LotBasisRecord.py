@@ -1,7 +1,5 @@
-from pystdf4.DataType.StdfBinary import B_n
-from pystdf4.DataType.StdfChar import C_1, C_12, C_n
-from pystdf4.DataType.StdfInteger import U_1, U_2, U_4, I_1, I_2, I_4
-from pystdf4.DataType.StdfFloat import R_4, R_8
+from pystdf4.DataType.StdfChar import C_1, C_n
+from pystdf4.DataType.StdfInteger import U_1, U_2, U_4
 from pystdf4.Records.StdfRecordBase import StdfRecord, register_record
 
 
@@ -95,7 +93,7 @@ class MIR(StdfRecord):
 
 
 @register_record(1, 20)
-class MasterResultsRecord(StdfRecord):
+class MRR(StdfRecord):
     """
     Master Results Record (MRR)
 
@@ -105,9 +103,18 @@ class MasterResultsRecord(StdfRecord):
     REC_TYP = 1
     REC_SUB = 20
 
+    # Date and time last part tested
+    FINISH_T: U_4 = U_4()
+    # Lot disposition code
+    DISP_COD: C_1 = C_1()
+    # Lot description supplied by user
+    USR_DESC: C_n = C_n()
+    # Lot description supplied by exec
+    EXC_DESC: C_n = C_n()
+
 
 @register_record(1, 30)
-class PartCountRecord(StdfRecord):
+class PCR(StdfRecord):
     """
     Part Count Record (PCR)
 
@@ -117,9 +124,24 @@ class PartCountRecord(StdfRecord):
     REC_TYP = 1
     REC_SUB = 30
 
+    # Test head number
+    HEAD_NUM: U_1 = U_1()
+    # Test site number
+    SITE_NUM: U_1 = U_1()
+    # Number of parts tested
+    PART_CNT: U_4 = U_4()
+    # Number of parts retested
+    RTST_CNT: U_4 = U_4()
+    # Number of aborts during testing
+    ABRT_CNT: U_4 = U_4()
+    # Number of good (passed) parts tested
+    GOOD_CNT: U_4 = U_4()
+    # Number of functional parts tested
+    FUNC_CNT: U_4 = U_4()
+
 
 @register_record(1, 40)
-class HardwareBinRecord(StdfRecord):
+class HBR(StdfRecord):
     """
     Hardware Bin Record (HBR)
 
@@ -129,9 +151,22 @@ class HardwareBinRecord(StdfRecord):
     REC_TYP = 1
     REC_SUB = 40
 
+    # Test head number
+    HEAD_NUM: U_1 = U_1()
+    # Test site number
+    SITE_NUM: U_1 = U_1()
+    # Hardware bin number
+    HBIN_NUM: U_2 = U_2()
+    # Number of parts in bin
+    HBIN_CNT: U_4 = U_4()
+    # Pass/fail indication
+    HBIN_PF: C_1 = C_1()
+    # Hardware bin name
+    HBIN_NAM: C_n = C_n()
+
 
 @register_record(1, 50)
-class SoftwareBinRecord(StdfRecord):
+class SBR(StdfRecord):
     """
     Software Bin Record (SBR)
 
@@ -141,9 +176,22 @@ class SoftwareBinRecord(StdfRecord):
     REC_TYP = 1
     REC_SUB = 50
 
+    # Test head number
+    HEAD_NUM: U_1 = U_1()
+    # Test site number
+    SITE_NUM: U_1 = U_1()
+    # Software bin number
+    SBIN_NUM: U_2 = U_2()
+    # Number of parts in bin
+    SBIN_CNT: U_4 = U_4()
+    # Pass/fail indication
+    SBIN_PF: C_1 = C_1()
+    # Software bin name
+    SBIN_NAM: C_n = C_n()
+
 
 @register_record(1, 60)
-class PinMapRecord(StdfRecord):
+class PMR(StdfRecord):
     """
     Pin Map Record (PMR)
 
@@ -153,9 +201,24 @@ class PinMapRecord(StdfRecord):
     REC_TYP = 1
     REC_SUB = 60
 
+    # Unique index associated with pin
+    PMR_INDX: U_2 = U_2()
+    # Channel type
+    CHAN_TYP: U_2 = U_2()
+    # Channel name
+    CHAN_NAM: C_n = C_n()
+    # Physical name of pin
+    PHY_NAM: C_n = C_n()
+    # Logical name of pin
+    LOG_NAM: C_n = C_n()
+    # Head number associated with channel
+    HEAD_NUM: U_1 = U_1()
+    # Site number associated with channel
+    SITE_NUM: U_1 = U_1()
+
 
 @register_record(1, 62)
-class PinGroupRecord(StdfRecord):
+class PGR(StdfRecord):
     """
     Pin Group Record (PGR)
 
@@ -165,9 +228,20 @@ class PinGroupRecord(StdfRecord):
     REC_TYP = 1
     REC_SUB = 62
 
+    # TODO: Implement PMR_INDX
+
+    # Unique index associated with pin group
+    GRP_INDX: U_2 = U_2()
+    # Name of pin group
+    GRP_NAM: C_n = C_n()
+    # Count (k) of PMR indexes
+    INDX_CNT: U_2 = U_2()
+    # Array of indexes for pins in the group
+    PMR_INDX: list[U_2] = []
+
 
 @register_record(1, 63)
-class PinListRecord(StdfRecord):
+class PLR(StdfRecord):
     """
     Pin List Record (PLR)
 
@@ -177,9 +251,28 @@ class PinListRecord(StdfRecord):
     REC_TYP = 1
     REC_SUB = 63
 
+    # TODO: Implement GRP_INDX, GRP_MODE, GRP_RADX, PGM_CHAR, RTN_CHAR, PGM_CHAL, RTN_CHAL
+
+    # Count (k) of pins or pin groups
+    GRP_CNT: U_2 = U_2()
+    # Array of pin or pin group indexes
+    GRP_INDX: list[U_2] = []
+    # Operating mode of pin group
+    GRP_MODE: list[U_2] = []
+    # Display radix of pin group
+    GRP_RADX: list[U_1] = []
+    # Program state encoding characters
+    PGM_CHAR: list[C_n] = []
+    # Return state encoding characters
+    RTN_CHAR: list[C_n] = []
+    # Program state encoding characters
+    PGM_CHAL: list[C_n] = []
+    # Return state encoding characters
+    RTN_CHAL: list[C_n] = []
+
 
 @register_record(1, 70)
-class RetestDataRecord(StdfRecord):
+class RDR(StdfRecord):
     """
     Retest Data Record (RDR)
 
@@ -189,9 +282,16 @@ class RetestDataRecord(StdfRecord):
     REC_TYP = 1
     REC_SUB = 70
 
+    # TODO: Implement RTST_BIN
+
+    # Number (k) of bins being retested
+    NUM_BINS: U_2 = U_2()
+    # Array of retest bin numbers
+    RTST_BIN: list[U_2] = []
+
 
 @register_record(1, 80)
-class SiteDescriptionRecord(StdfRecord):
+class SDR(StdfRecord):
     """
     Site Description Record (SDR)
 
@@ -200,3 +300,44 @@ class SiteDescriptionRecord(StdfRecord):
 
     REC_TYP = 1
     REC_SUB = 80
+
+    # Test head number
+    HEAD_NUM: U_1 = U_1()
+    # Site group number
+    SITE_GRP: U_1 = U_1()
+    # Number of test sites in site group
+    SITE_CNT: U_1 = U_1()
+    # Array of test site numbers
+    SITE_NUM: list[U_1] = []
+    # Handler or prober type
+    HAND_TYP: C_n = C_n()
+    # Handler or prober ID
+    HAND_ID: C_n = C_n()
+    # Probe card type
+    CARD_TYP: C_n = C_n()
+    # Probe card ID
+    CARD_ID: C_n = C_n()
+    # Load board type
+    LOAD_TYP: C_n = C_n()
+    # Load board ID
+    LOAD_ID: C_n = C_n()
+    # DIB board type
+    DIB_TYP: C_n = C_n()
+    # DIB board ID
+    DIB_ID: C_n = C_n()
+    # Interface cable type
+    CABL_TYP: C_n = C_n()
+    # Interface cable ID
+    CABL_ID: C_n = C_n()
+    # Handler contactor type
+    CONT_TYP: C_n = C_n()
+    # Handler contactor ID
+    CONT_ID: C_n = C_n()
+    # Laser type
+    LASR_TYP: C_n = C_n()
+    # Laser ID
+    LASR_ID: C_n = C_n()
+    # Extra equipment type field
+    EXTR_TYP: C_n = C_n()
+    # Extra equipment ID
+    EXTR_ID: C_n = C_n()

@@ -1,12 +1,10 @@
-from pystdf4.DataType.StdfBinary import B_n
-from pystdf4.DataType.StdfChar import C_1, C_12, C_n
-from pystdf4.DataType.StdfInteger import U_1, U_2, U_4, I_1, I_2, I_4
-from pystdf4.DataType.StdfFloat import R_4, R_8
+from pystdf4.DataType.StdfChar import C_n
+from pystdf4.DataType.StdfInteger import U_2
 from pystdf4.Records.StdfRecordBase import StdfRecord, register_record
 
 
 @register_record(50, 10)
-class GenericDataRecord(StdfRecord):
+class GDR(StdfRecord):
     """
     Generic Data Record (GDR)
 
@@ -16,9 +14,16 @@ class GenericDataRecord(StdfRecord):
     REC_TYP = 50
     REC_SUB = 10
 
+    # TODO: Implement GEN_DATA
+
+    # Count of data fields in record
+    FLD_CNT: U_2 = U_2()
+    # Data type code and data for one field
+    # GEN_DATA: V_n =V_n()
+
 
 @register_record(50, 30)
-class DatalogTextRecord(StdfRecord):
+class DTR(StdfRecord):
     """
     Datalog Text Record (DTR)
 
@@ -27,3 +32,6 @@ class DatalogTextRecord(StdfRecord):
 
     REC_TYP = 50
     REC_SUB = 30
+
+    # ASCII text string
+    TEXT_DAT: C_n = C_n()
