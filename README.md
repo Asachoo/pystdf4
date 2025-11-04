@@ -78,6 +78,40 @@ This design ensures each data element can:
 
 ---
 
+
+## 📋 STDF v4 Record Types Implementation Status
+
+| Record Type | Name                                | REC_TYP | REC_SUB | Status        | Notes                           |
+|-------------|-------------------------------------|---------|---------|---------------|---------------------------------|
+| FAR         | File Attributes Record              | 0       | 10      | ✔️ Complete   | Required as first record        |
+| ATR         | Audit Trail Record                  | 0       | 20      | ✔️ Complete   | Tracks file modifications       |
+| MIR         | Master Information Record           | 1       | 10      | ✔️ Complete   | Lot-level information           |
+| MRR         | Master Results Record               | 1       | 20      | ❌ Incomplete | End of lot summary              |
+| PCR         | Part Count Record                   | 1       | 30      | ❌ Incomplete | Part statistics                 |
+| HBR         | Hardware Bin Record                 | 1       | 40      | ❌ Incomplete | Physical binning counts         |
+| SBR         | Software Bin Record                 | 1       | 50      | ❌ Incomplete | Logical binning counts          |
+| PMR         | Pin Map Record                      | 1       | 60      | ❌ Incomplete | Pin/channel mapping             |
+| PGR         | Pin Group Record                    | 1       | 62      | ❌ Incomplete | Pin grouping                    |
+| PLR         | Pin List Record                     | 1       | 63      | ❌ Incomplete | Pin group display properties    |
+| RDR         | Retest Data Record                  | 1       | 70      | ❌ Incomplete | Retest information              |
+| SDR         | Site Description Record             | 1       | 80      | ❌ Incomplete | Test site configuration         |
+| WIR         | Wafer Information Record            | 2       | 10      | ❌ Incomplete | Wafer start marker              |
+| WRR         | Wafer Results Record                | 2       | 20      | ❌ Incomplete | Wafer completion summary        |
+| WCR         | Wafer Configuration Record          | 2       | 30      | ❌ Incomplete | Wafer dimensions/orientation    |
+| PIR         | Part Information Record             | 5       | 10      | ❌ Incomplete | Part start marker               |
+| PRR         | Part Results Record                 | 5       | 20      | ❌ Incomplete | Part completion results         |
+| TSR         | Test Synopsis Record                | 10      | 30      | ❌ Incomplete | Test execution statistics       |
+| PTR         | Parametric Test Record              | 15      | 10      | ❌ Incomplete | Single parametric test result   |
+| MPR         | Multiple-Result Parametric Record   | 15      | 15      | ❌ Incomplete | Multiple parametric test results|
+| FTR         | Functional Test Record              | 15      | 20      | ❌ Incomplete | Functional test results         |
+| BPS         | Begin Program Section Record        | 20      | 10      | ❌ Incomplete | Program section start marker    |
+| EPS         | End Program Section Record          | 20      | 20      | ❌ Incomplete | Program section end marker      |
+| GDR         | Generic Data Record                 | 50      | 10      | ❌ Incomplete | User-defined data               |
+| DTR         | Datalog Text Record                 | 50      | 30      | ❌ Incomplete | Datalog comments                |
+
+---
+
+
 ## 🧪 Example Use Cases (Coming Soon)
 
 * Parse STDF records into structured Python objects

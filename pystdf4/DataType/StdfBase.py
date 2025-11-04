@@ -35,6 +35,8 @@ class StdfDataBase(abc.ABC, Generic[T]):
 
     __slots__ = ("_code", "_description", "_bytes_len", "_max_len", "_internal_bytes")
 
+    # region Magic Methods
+
     def __init__(
         self, code: str, description: str, bytes_len: int = -1, max_len: int = -1
     ):
