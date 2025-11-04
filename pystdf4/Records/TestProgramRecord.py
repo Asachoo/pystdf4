@@ -2,11 +2,11 @@ from pystdf4.DataType.StdfBinary import B_1
 from pystdf4.DataType.StdfChar import C_1, C_n
 from pystdf4.DataType.StdfInteger import U_1, U_4
 from pystdf4.DataType.StdfFloat import R_4
-from pystdf4.Records.StdfRecordBase import StdfRecord, register_record
+from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
 @register_record(10, 30)
-class TSR(StdfRecord):
+class TSR(StdfRecordBase):
     """
     Test Synopsis Record (TSR)
 

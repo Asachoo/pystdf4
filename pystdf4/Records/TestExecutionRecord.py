@@ -2,11 +2,11 @@ from pystdf4.DataType.StdfBinary import B_n, B_1
 from pystdf4.DataType.StdfChar import C_n
 from pystdf4.DataType.StdfInteger import U_1, U_2, U_4, I_1, I_2, I_4
 from pystdf4.DataType.StdfFloat import R_4
-from pystdf4.Records.StdfRecordBase import StdfRecord, register_record
+from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
 @register_record(15, 10)
-class PTR(StdfRecord):
+class PTR(StdfRecordBase):
     """
     Parametric Test Record (PTR)
 
@@ -59,7 +59,7 @@ class PTR(StdfRecord):
 
 
 @register_record(15, 15)
-class MPR(StdfRecord):
+class MPR(StdfRecordBase):
     """
     Multiple-Result Parametric Record (MPR)
 
@@ -128,7 +128,7 @@ class MPR(StdfRecord):
 
 
 @register_record(15, 20)
-class FTR(StdfRecord):
+class FTR(StdfRecordBase):
     """
     Functional Test Record (FTR)
 

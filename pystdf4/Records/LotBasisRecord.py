@@ -1,10 +1,10 @@
 from pystdf4.DataType.StdfChar import C_1, C_n
 from pystdf4.DataType.StdfInteger import U_1, U_2, U_4
-from pystdf4.Records.StdfRecordBase import StdfRecord, register_record
+from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
 @register_record(1, 10)
-class MIR(StdfRecord):
+class MIR(StdfRecordBase):
     """
     Master Information Record (MIR)
 
@@ -93,7 +93,7 @@ class MIR(StdfRecord):
 
 
 @register_record(1, 20)
-class MRR(StdfRecord):
+class MRR(StdfRecordBase):
     """
     Master Results Record (MRR)
 
@@ -114,7 +114,7 @@ class MRR(StdfRecord):
 
 
 @register_record(1, 30)
-class PCR(StdfRecord):
+class PCR(StdfRecordBase):
     """
     Part Count Record (PCR)
 
@@ -141,7 +141,7 @@ class PCR(StdfRecord):
 
 
 @register_record(1, 40)
-class HBR(StdfRecord):
+class HBR(StdfRecordBase):
     """
     Hardware Bin Record (HBR)
 
@@ -166,7 +166,7 @@ class HBR(StdfRecord):
 
 
 @register_record(1, 50)
-class SBR(StdfRecord):
+class SBR(StdfRecordBase):
     """
     Software Bin Record (SBR)
 
@@ -191,7 +191,7 @@ class SBR(StdfRecord):
 
 
 @register_record(1, 60)
-class PMR(StdfRecord):
+class PMR(StdfRecordBase):
     """
     Pin Map Record (PMR)
 
@@ -218,7 +218,7 @@ class PMR(StdfRecord):
 
 
 @register_record(1, 62)
-class PGR(StdfRecord):
+class PGR(StdfRecordBase):
     """
     Pin Group Record (PGR)
 
@@ -241,7 +241,7 @@ class PGR(StdfRecord):
 
 
 @register_record(1, 63)
-class PLR(StdfRecord):
+class PLR(StdfRecordBase):
     """
     Pin List Record (PLR)
 
@@ -272,7 +272,7 @@ class PLR(StdfRecord):
 
 
 @register_record(1, 70)
-class RDR(StdfRecord):
+class RDR(StdfRecordBase):
     """
     Retest Data Record (RDR)
 
@@ -291,7 +291,7 @@ class RDR(StdfRecord):
 
 
 @register_record(1, 80)
-class SDR(StdfRecord):
+class SDR(StdfRecordBase):
     """
     Site Description Record (SDR)
 

@@ -1,6 +1,6 @@
 import struct
 from typing import TypeVar
-from .StdfBase import StdfDataBase
+from .StdfDataBase import StdfDataBase
 from functools import cached_property
 
 T = TypeVar("T", bound=float)
@@ -54,7 +54,6 @@ class R_4(StdfFloatBase):
         super().__init__(
             code="R*4",
             description="Four byte floating point number (IEEE 754)",
-            bytes_len=4,
         )
 
 
@@ -63,5 +62,4 @@ class R_8(StdfFloatBase):
         super().__init__(
             code="R*8",
             description="Eight byte floating point number (IEEE 754)",
-            bytes_len=8,
         )

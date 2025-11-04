@@ -1,11 +1,11 @@
 from pystdf4.DataType.StdfBinary import B_n, B_1
 from pystdf4.DataType.StdfChar import C_n
 from pystdf4.DataType.StdfInteger import U_1, U_2, U_4, I_2
-from pystdf4.Records.StdfRecordBase import StdfRecord, register_record
+from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
 @register_record(5, 10)
-class PIR(StdfRecord):
+class PIR(StdfRecordBase):
     """
     Part Information Record (PIR)
 
@@ -22,7 +22,7 @@ class PIR(StdfRecord):
 
 
 @register_record(5, 20)
-class PRR(StdfRecord):
+class PRR(StdfRecordBase):
     """
     Part Results Record (PRR)
 

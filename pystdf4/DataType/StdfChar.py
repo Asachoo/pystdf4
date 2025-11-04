@@ -1,5 +1,5 @@
 from typing import TypeVar
-from .StdfBase import StdfDataBase
+from .StdfDataBase import StdfDataBase
 
 T = TypeVar("T", bound=str)
 
@@ -30,33 +30,30 @@ class StdfStringBase(StdfDataBase[str]):
         return self.internal_bytes.decode("ASCII")
 
     def _build_stdf(self, stdf_bytes: bytes) -> bytes:
-        if self._code == "C*n":
+        if self.is_variable_length:
+            # Variable-length strings are stored length-prefixed
             length_byte = stdf_bytes[0]
             data_bytes = stdf_bytes[1 : 1 + length_byte]
             if len(data_bytes) != length_byte:
                 raise ValueError("Invalid length prefix in C*n data")
             return data_bytes
-        elif self._code.startswith("C*") and "*" in self._code[1:]:
-            # Fixed-length strings like C*1
+        else:
+            # Fixed-length strings are confirmed by length
             expected_length = int(self._code.split("*")[1])
             if len(stdf_bytes) != expected_length:
                 raise ValueError(f"Expected {expected_length} bytes for {self._code}")
             return stdf_bytes
-        else:
-            raise NotImplementedError(f"Unsupported string type: {self._code}")
 
     def _parse_stdf(self) -> bytes:
-        if self._code == "C*n":
+        if self.is_variable_length:
             # Add length prefix for variable-length strings
             length = len(self.internal_bytes)
             if length > 255:
                 raise ValueError("C*n string too long (> 255 bytes)")
             return bytes([length]) + self.internal_bytes
-        elif self._code.startswith("C*") and "*" in self._code[1:]:
+        else:
             # Fixed-length strings are already properly formatted
             return self.internal_bytes
-        else:
-            raise NotImplementedError(f"Unsupported string type: {self._code}")
 
 
 class C_1(StdfStringBase):
@@ -68,7 +65,6 @@ class C_1(StdfStringBase):
         super().__init__(
             code="C*1",
             description="Fixed-length character string",
-            bytes_len=1,
         )
 
 

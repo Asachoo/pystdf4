@@ -1,10 +1,10 @@
 from pystdf4.DataType.StdfChar import C_n
 from pystdf4.DataType.StdfInteger import U_2
-from pystdf4.Records.StdfRecordBase import StdfRecord, register_record
+from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
 @register_record(50, 10)
-class GDR(StdfRecord):
+class GDR(StdfRecordBase):
     """
     Generic Data Record (GDR)
 
@@ -23,7 +23,7 @@ class GDR(StdfRecord):
 
 
 @register_record(50, 30)
-class DTR(StdfRecord):
+class DTR(StdfRecordBase):
     """
     Datalog Text Record (DTR)
 

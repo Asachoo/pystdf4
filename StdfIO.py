@@ -1,5 +1,5 @@
 from pathlib import Path
-from .PyStdf4 import PyStdf4
+from .pystdf4.PyStdf4 import PyStdf4
 
 
 class StdfIO:
