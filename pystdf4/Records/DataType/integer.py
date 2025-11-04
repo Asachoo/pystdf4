@@ -1,6 +1,6 @@
 import struct
 from typing import TypeVar
-from .StdfDataBase import StdfDataBase
+from .base import StdfDataBase
 from functools import cached_property
 
 T = TypeVar("T", bound=int)

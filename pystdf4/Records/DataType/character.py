@@ -1,5 +1,5 @@
 from typing import TypeVar
-from .StdfDataBase import StdfDataBase
+from .base import StdfDataBase
 
 T = TypeVar("T", bound=str)
 

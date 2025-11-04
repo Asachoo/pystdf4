@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from .DataType import C_n
 from .DataType import CharVarLen
-from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
+from .base import StdfRecordBase, register_record
 
 
 @dataclass
@@ -21,16 +21,3 @@ class BPS(StdfRecordBase):
     """
     Program section (or sequencer) name
     """
-
-
-@dataclass
-@register_record(20, 20)
-class EPS(StdfRecordBase):
-    """
-    End Program Section Record (EPS)
-
-    Function: Marks the end of the current program section (or sequencer) in the job plan.
-    """
-
-    REC_TYP = 20
-    REC_SUB = 20

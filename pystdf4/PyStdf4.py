@@ -1,13 +1,16 @@
-from pystdf4.Records.StdfRecordBase import StdfRecordBase
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pystdf4.Records.base import StdfRecordBase
 
 
 class PyStdf4:
-    records: list[StdfRecordBase]
+    records: list["StdfRecordBase"]
 
     def __init__(self):
         self.records = list()
 
-    def add_record(self, record: StdfRecordBase):
+    def add_record(self, record: "StdfRecordBase"):
         self.records.append(record)
 
     def to_bytes(self) -> bytes:

@@ -1,0 +1,31 @@
+from dataclasses import dataclass
+
+from .DataType import U_2
+from .DataType import UInt16
+from .base import StdfRecordBase, register_record
+
+
+@dataclass
+@register_record(50, 10)
+class GDR(StdfRecordBase):
+    """
+    Generic Data Record (GDR)
+
+    Function: Contains information that does not conform to any other record type defined by the STDF specification. Such records are intended to be written under the control of job plans executing on the tester. This data may be used for any purpose that the user desires.
+    """
+
+    REC_TYP = 50
+    REC_SUB = 10
+
+    # TODO: Implement GEN_DATA
+
+    FLD_CNT: UInt16 = U_2()
+    """
+    Count of data fields in record
+    """
+
+    # GEN_DATA: V_n =V_n()
+    """
+    Data type code and data for one field
+    """
+

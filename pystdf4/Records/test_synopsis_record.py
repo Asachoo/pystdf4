@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from .DataType import U_1, U_4, R_4, B_1, C_1, C_n
 from .DataType import UInt8, UInt32, Float32
 from .DataType import BinarySingle, CharSingle, CharVarLen
-from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
+from .base import StdfRecordBase, register_record
 
 
 @dataclass
