@@ -22,7 +22,7 @@ class StdfFloatBase(StdfDataBase[float]):
             raise ValueError(
                 f"Unsupported float type code: {self._code}. Supported codes: {list(self._CODE_TO_FMT.keys())}"
             )
-        return self.ENDIAN + fmt_code
+        return self._ENDIAN + fmt_code
 
     def _build_py(self, py_value: float) -> bytes:
         # Validate py_value type

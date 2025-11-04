@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from pystdf4.DataType.StdfChar import C_n
-from pystdf4.DataType.StdfInteger import U_2
+from .DataType import U_2, C_n
+from .DataType import UInt16, CharVarLen
 from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
@@ -20,7 +20,7 @@ class GDR(StdfRecordBase):
     # TODO: Implement GEN_DATA
 
     # Count of data fields in record
-    FLD_CNT: U_2 = U_2()
+    FLD_CNT: UInt16 = U_2()
     # Data type code and data for one field
     # GEN_DATA: V_n =V_n()
 
@@ -38,4 +38,4 @@ class DTR(StdfRecordBase):
     REC_SUB = 30
 
     # ASCII text string
-    TEXT_DAT: C_n = C_n()
+    TEXT_DAT: CharVarLen = C_n()

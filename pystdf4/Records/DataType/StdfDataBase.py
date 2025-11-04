@@ -33,7 +33,7 @@ class StdfDataBase(abc.ABC, Generic[T]):
         - stdf_value = b'\x05Hello' (length-prefixed for variable-length)
     """
 
-    ENDIAN = "<"  # Little-endian byte order
+    _ENDIAN = "<"  # Little-endian byte order
 
     __slots__ = (
         "_code",

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from pystdf4.DataType.StdfChar import C_n
-from pystdf4.DataType.StdfInteger import U_1, U_4
+from .DataType import U_1, U_4, C_n
+from .DataType import UInt8, UInt32, CharVarLen
 from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
@@ -18,9 +18,9 @@ class FAR(StdfRecordBase):
     REC_SUB = 10
 
     # CPU type that wrote this file
-    CPU_TYPE: U_1 = U_1()
+    CPU_TYPE: UInt8 = U_1()
     # STDF version number
-    STDF_VER: U_1 = U_1()
+    STDF_VER: UInt8 = U_1()
 
 
 @dataclass
@@ -36,6 +36,6 @@ class ATR(StdfRecordBase):
     REC_SUB = 20
 
     # Date and time of STDF file modification
-    MOD_TIM: U_4 = U_4()
+    MOD_TIM: UInt32 = U_4()
     # Command line of program
-    CMD_LINE: C_n = C_n()
+    CMD_LINE: CharVarLen = C_n()

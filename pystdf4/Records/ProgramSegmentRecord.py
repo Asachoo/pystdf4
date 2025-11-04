@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
-from pystdf4.DataType.StdfChar import C_n
+from .DataType import C_n
+from .DataType import CharVarLen
 from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
@@ -17,7 +18,7 @@ class BPS(StdfRecordBase):
     REC_SUB = 10
 
     # Program section (or sequencer) name
-    SEQ_NAME: C_n = C_n()
+    SEQ_NAME: CharVarLen = C_n()
 
 
 @dataclass
