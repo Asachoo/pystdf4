@@ -1,7 +1,7 @@
 import abc
 from struct import pack
 from typing import Dict, Type
-from pystdf4.DataType.StdfDataBase import StdfDataBase
+from .DataType.StdfDataBase import StdfDataBase
 
 
 # Global registry mapping (REC_TYP, REC_SUB) → record class

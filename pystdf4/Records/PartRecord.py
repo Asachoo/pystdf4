@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from pystdf4.DataType.StdfBinary import B_n, B_1
-from pystdf4.DataType.StdfChar import C_n
-from pystdf4.DataType.StdfInteger import U_1, U_2, U_4, I_2
+from .DataType import U_1, U_2, U_4, I_2, B_n, B_1, C_n
+from .DataType import UInt8, UInt16, UInt32, Int16
+from .DataType import BinarySingle, BinaryVarLen, CharVarLen
 from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
@@ -19,9 +19,9 @@ class PIR(StdfRecordBase):
     REC_SUB = 10
 
     # Test head number
-    HEAD_NUM: U_1 = U_1()
+    HEAD_NUM: UInt8 = U_1()
     # Test site number
-    SITE_NUM: U_1 = U_1()
+    SITE_NUM: UInt8 = U_1()
 
 
 @dataclass
@@ -37,26 +37,26 @@ class PRR(StdfRecordBase):
     REC_SUB = 20
 
     # Test head number
-    HEAD_NUM: U_1 = U_1()
+    HEAD_NUM: UInt8 = U_1()
     # Test site number
-    SITE_NUM: U_1 = U_1()
+    SITE_NUM: UInt8 = U_1()
     # Part information flag
-    PART_FLG: B_1 = B_1()
+    PART_FLG: BinarySingle = B_1()
     # Number of tests executed
-    NUM_TEST: U_2 = U_2()
+    NUM_TEST: UInt16 = U_2()
     # Hardware bin number
-    HARD_BIN: U_2 = U_2()
+    HARD_BIN: UInt16 = U_2()
     # Software bin number
-    SOFT_BIN: U_2 = U_2()
+    SOFT_BIN: UInt16 = U_2()
     # (Wafer) X coordinate
-    X_COORD: I_2 = I_2()
+    X_COORD: Int16 = I_2()
     # (Wafer) Y coordinate
-    Y_COORD: I_2 = I_2()
+    Y_COORD: Int16 = I_2()
     # Elapsed test time in milliseconds
-    TEST_T: U_4 = U_4()
+    TEST_T: UInt32 = U_4()
     # Part identification
-    PART_ID: C_n = C_n()
+    PART_ID: CharVarLen = C_n()
     # Part description text
-    PART_TXT: C_n = C_n()
+    PART_TXT: CharVarLen = C_n()
     # Part repair information
-    PART_FIX: B_n = B_n()
+    PART_FIX: BinaryVarLen = B_n()
