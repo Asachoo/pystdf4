@@ -1,10 +1,10 @@
 from pystdf4.DataType.StdfChar import C_n
 from pystdf4.DataType.StdfInteger import U_1, U_4
-from pystdf4.Records.StdfRecordBase import StdfRecord, register_record
+from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
 @register_record(0, 10)
-class FAR(StdfRecord):
+class FAR(StdfRecordBase):
     """
     File Attributes Record (FAR)
 
@@ -21,7 +21,7 @@ class FAR(StdfRecord):
 
 
 @register_record(0, 20)
-class ATR(StdfRecord):
+class ATR(StdfRecordBase):
     """
     Audit Trail Record (ATR)
 

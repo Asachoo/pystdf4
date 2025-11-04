@@ -1,11 +1,11 @@
 from pystdf4.DataType.StdfChar import C_1, C_n
 from pystdf4.DataType.StdfInteger import U_1, U_4, I_2
 from pystdf4.DataType.StdfFloat import R_4
-from pystdf4.Records.StdfRecordBase import StdfRecord, register_record
+from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
 @register_record(2, 10)
-class WIR(StdfRecord):
+class WIR(StdfRecordBase):
     """
     Wafer Information Record (WIR)
 
@@ -26,7 +26,7 @@ class WIR(StdfRecord):
 
 
 @register_record(2, 20)
-class WRR(StdfRecord):
+class WRR(StdfRecordBase):
     """
     Wafer Results Record (WRR)
 
@@ -67,7 +67,7 @@ class WRR(StdfRecord):
 
 
 @register_record(2, 30)
-class WCR(StdfRecord):
+class WCR(StdfRecordBase):
     """
     Wafer Configuration Record (WCR)
 

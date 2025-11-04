@@ -1,6 +1,6 @@
 import struct
 from typing import TypeVar
-from .StdfBase import StdfDataBase
+from .StdfDataBase import StdfDataBase
 from functools import cached_property
 
 T = TypeVar("T", bound=int)
@@ -76,7 +76,6 @@ class U_1(StdfIntBase):
         super().__init__(
             code="U*1",
             description="One byte unsigned integer",
-            bytes_len=1,
         )
 
 
@@ -85,7 +84,6 @@ class U_2(StdfIntBase):
         super().__init__(
             code="U*2",
             description="Two byte unsigned integer",
-            bytes_len=2,
         )
 
 
@@ -94,7 +92,6 @@ class U_4(StdfIntBase):
         super().__init__(
             code="U*4",
             description="Four byte unsigned integer",
-            bytes_len=4,
         )
 
 
@@ -104,7 +101,6 @@ class I_1(StdfIntBase):
         super().__init__(
             code="I*1",
             description="One byte signed integer",
-            bytes_len=1,
         )
 
 
@@ -113,7 +109,6 @@ class I_2(StdfIntBase):
         super().__init__(
             code="I*2",
             description="Two byte signed integer",
-            bytes_len=2,
         )
 
 
@@ -122,5 +117,4 @@ class I_4(StdfIntBase):
         super().__init__(
             code="I*4",
             description="Four byte signed integer",
-            bytes_len=4,
         )

@@ -1,10 +1,11 @@
 import abc
+from struct import pack
 from typing import Dict, Type
-from pystdf4.DataType.StdfBase import StdfDataBase
+from pystdf4.DataType.StdfDataBase import StdfDataBase
 
 
 # Global registry mapping (REC_TYP, REC_SUB) → record class
-_RECORD_REGISTRY: Dict[tuple, Type["StdfRecord"]] = {}
+_RECORD_REGISTRY: Dict[tuple, Type["StdfRecordBase"]] = {}
 
 
 def register_record(rec_typ: int, rec_sub: int):
@@ -34,7 +35,7 @@ def register_record(rec_typ: int, rec_sub: int):
     return decorator
 
 
-class StdfRecord(abc.ABC):
+class StdfRecordBase(abc.ABC):
     """
     Abstract base class for all STDF records.
 
@@ -49,9 +50,11 @@ class StdfRecord(abc.ABC):
     REC_TYP: int
     REC_SUB: int
 
+    # region Magic Methods
+
     def __init__(self, rec_typ=None, rec_sub=None):
         """
-        Initialize a StdfRecord instance.
+        Initialize a StdfRecordBase instance.
 
         Args:
             rec_typ (int, optional): Record type override. Defaults to the class-level REC_TYP.
@@ -77,37 +80,6 @@ class StdfRecord(abc.ABC):
         else:
             super().__setattr__(name, value)
 
-    @classmethod
-    def create(cls, rec_typ: int, rec_sub: int):
-        """
-        Create a record instance based on its type and subtype.
-
-        Args:
-            rec_typ (int): Record type identifier.
-            rec_sub (int): Record subtype identifier.
-
-        Returns:
-            StdfRecord: An instance of the registered record class,
-                        or a generic StdfRecord if not registered.
-        """
-        key = (rec_typ, rec_sub)
-        if key in _RECORD_REGISTRY:
-            record_cls = _RECORD_REGISTRY[key]
-            return record_cls()
-        return cls(rec_typ=rec_typ, rec_sub=rec_sub)
-
-    def serialize(self) -> bytes:
-        """Serialize this record into bytes. Must be implemented by subclasses."""
-        raise NotImplementedError(
-            f"{self.__class__.__name__}.serialize() not implemented."
-        )
-
-    def deserialize(self, data: bytes):
-        """Deserialize record data from bytes. Must be implemented by subclasses."""
-        raise NotImplementedError(
-            f"{self.__class__.__name__}.deserialize() not implemented."
-        )
-
     def __repr__(self) -> str:
         """
         Return a detailed string representation of the STDF record.
@@ -119,3 +91,51 @@ class StdfRecord(abc.ABC):
             f"{self.__class__.__name__}(REC_TYP={self.REC_TYP!r}, "
             f"REC_SUB={self.REC_SUB!r}, REC_LEN={self.REC_LEN})"
         )
+
+    # endregion
+
+    # region Factory Methods
+
+    @classmethod
+    def create(cls, rec_typ: int, rec_sub: int):
+        """
+        Create a record instance based on its type and subtype.
+
+        Args:
+            rec_typ (int): Record type identifier.
+            rec_sub (int): Record subtype identifier.
+
+        Returns:
+            StdfRecordBase: An instance of the registered record class,
+                        or a generic StdfRecordBase if not registered.
+        """
+        key = (rec_typ, rec_sub)
+        if key in _RECORD_REGISTRY:
+            record_cls = _RECORD_REGISTRY[key]
+            return record_cls()
+        return cls(rec_typ=rec_typ, rec_sub=rec_sub)
+
+    # endregion
+
+    # region Properties
+
+    @property
+    def header_bytes(self) -> bytes:
+        print(self.REC_TYP, self.REC_SUB, pack("<B", self.REC_TYP) + pack("<B", self.REC_SUB))
+        return pack("<B", self.REC_TYP) + pack("<B", self.REC_SUB)
+
+    @property
+    def data_bytes(self) -> bytes:
+        data_bytes = bytearray()
+        for field_name in self.__annotations__:
+            field_value: StdfDataBase = getattr(self, field_name)
+            data_bytes += field_value.stdf_value
+        return data_bytes
+
+    @property
+    def stdf_bytes(self) -> bytes:
+        header_bytes = self.header_bytes
+        data_bytes = self.data_bytes
+        return header_bytes + pack("<H", len(data_bytes)) + data_bytes
+
+    # endregion

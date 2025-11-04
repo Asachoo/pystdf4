@@ -1,4 +1,5 @@
 import abc
+from functools import cached_property
 from typing import TypeVar, Generic, Optional
 
 T = TypeVar("T", int, float, str, bytes)
@@ -37,9 +38,7 @@ class StdfDataBase(abc.ABC, Generic[T]):
 
     # region Magic Methods
 
-    def __init__(
-        self, code: str, description: str, bytes_len: int = -1, max_len: int = -1
-    ):
+    def __init__(self, code: str, description: str, max_len: int = -1):
         """
         Initialize a STDF data field.
 
@@ -55,7 +54,7 @@ class StdfDataBase(abc.ABC, Generic[T]):
         """
         self._code = code
         self._description = description
-        self._bytes_len = bytes_len
+        self._bytes_len = StdfDataBase._parse_bytes_len(code)
         self._max_len = max_len
         self._internal_bytes: Optional[bytes] = None
 
@@ -82,6 +81,16 @@ class StdfDataBase(abc.ABC, Generic[T]):
         )
 
     # region Properties
+
+    @cached_property
+    def is_variable_length(self) -> bool:
+        """
+        Check if the data type is variable-length.
+
+        Returns:
+            bool: True if the data type is variable-length, False otherwise
+        """
+        return self._bytes_len == -1
 
     @property
     def internal_bytes(self) -> bytes:
@@ -196,6 +205,24 @@ class StdfDataBase(abc.ABC, Generic[T]):
             raise ValueError(
                 f"{self._code}: length {len(value)} exceeds max {self._max_len}"
             )
+
+    @staticmethod
+    def _parse_bytes_len(code: str) -> int:
+        """
+        Parse bytes length from STDF type code.
+
+        Args:
+            code: STDF type code (e.g., "C*1", "U*2", "I*4", "C*n")
+
+        Returns:
+            int: Number of bytes in the data type, or -1 for variable-length types
+        """
+        if code.endswith("*n"):
+            return -1
+        try:
+            return int(code.split("*")[1])
+        except (IndexError, ValueError):
+            raise ValueError(f"Invalid code format: {code}")
 
     # endregion
 

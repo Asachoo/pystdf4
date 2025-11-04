@@ -1,9 +1,9 @@
 from pystdf4.DataType.StdfChar import C_n
-from pystdf4.Records.StdfRecordBase import StdfRecord, register_record
+from pystdf4.Records.StdfRecordBase import StdfRecordBase, register_record
 
 
 @register_record(20, 10)
-class BPS(StdfRecord):
+class BPS(StdfRecordBase):
     """
     Begin Program Section Record (BPS)
 
@@ -18,7 +18,7 @@ class BPS(StdfRecord):
 
 
 @register_record(20, 20)
-class EPS(StdfRecord):
+class EPS(StdfRecordBase):
     """
     End Program Section Record (EPS)
 
