@@ -60,7 +60,6 @@ class StdfRecordBase(abc.ABC):
             rec_typ (int, optional): Record type override. Defaults to the class-level REC_TYP.
             rec_sub (int, optional): Record subtype override. Defaults to the class-level REC_SUB.
         """
-        self.REC_LEN: int = 0
         self.REC_TYP: int = rec_typ or self.REC_TYP
         self.REC_SUB: int = rec_sub or self.REC_SUB
 
@@ -87,10 +86,7 @@ class StdfRecordBase(abc.ABC):
         Returns:
             str: Developer-friendly representation with class name and key attributes
         """
-        return (
-            f"{self.__class__.__name__}(REC_TYP={self.REC_TYP!r}, "
-            f"REC_SUB={self.REC_SUB!r}, REC_LEN={self.REC_LEN})"
-        )
+        return f"{self.__class__.__name__}(REC_TYP={self.REC_TYP!r}, REC_SUB={self.REC_SUB!r})"
 
     # endregion
 
@@ -120,22 +116,20 @@ class StdfRecordBase(abc.ABC):
     # region Properties
 
     @property
-    def header_bytes(self) -> bytes:
-        print(self.REC_TYP, self.REC_SUB, pack("<B", self.REC_TYP) + pack("<B", self.REC_SUB))
-        return pack("<B", self.REC_TYP) + pack("<B", self.REC_SUB)
-
-    @property
     def data_bytes(self) -> bytes:
         data_bytes = bytearray()
         for field_name in self.__annotations__:
             field_value: StdfDataBase = getattr(self, field_name)
-            data_bytes += field_value.stdf_value
+            try:
+                data_bytes += field_value.stdf_value
+            except ValueError as e:
+                e.args = (f"Invalid value for {field_name}: {field_value}",)
+                raise e
         return data_bytes
 
     @property
     def stdf_bytes(self) -> bytes:
-        header_bytes = self.header_bytes
-        data_bytes = self.data_bytes
-        return header_bytes + pack("<H", len(data_bytes)) + data_bytes
+        data = self.data_bytes
+        return pack("<HBB", len(data), self.REC_TYP, self.REC_SUB) + data
 
     # endregion

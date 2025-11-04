@@ -11,11 +11,7 @@ class PyStdf4:
         self.records.append(record)
 
     def to_bytes(self) -> bytes:
-        stdf_bytes = bytearray()
-        for record in self.records:
-            stdf_bytes += record.stdf_bytes
-
-        return stdf_bytes
+        return b"".join(record.stdf_bytes for record in self.records)
 
     def parse_stdf(self, stdf_data: bytes):
         # Parsing logic to populate records from stdf_data

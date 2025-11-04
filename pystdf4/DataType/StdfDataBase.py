@@ -15,6 +15,7 @@ class StdfDataBase(abc.ABC, Generic[T]):
         - STDF Storage Form (stdf_value): How data is stored in STDF file
           - For fixed-length types: stdf_value == internal_bytes
           - For variable-length types: stdf_value includes length prefixes
+        - Missing Data Support: Values can be None to indicate missing data according to STDF spec
 
     Data Flow:
         Set py_value -> _build_py() -> internal_bytes -> _parse_stdf() -> stdf_value
@@ -34,11 +35,24 @@ class StdfDataBase(abc.ABC, Generic[T]):
 
     ENDIAN = "<"  # Little-endian byte order
 
-    __slots__ = ("_code", "_description", "_bytes_len", "_max_len", "_internal_bytes")
+    __slots__ = (
+        "_code",
+        "_description",
+        "_bytes_len",
+        "_max_len",
+        "_internal_bytes",
+        "_missing_default",
+    )
 
     # region Magic Methods
 
-    def __init__(self, code: str, description: str, max_len: int = -1):
+    def __init__(
+        self,
+        code: str,
+        description: str,
+        max_len: int = -1,
+        missing_default: Optional[T] = None,
+    ):
         """
         Initialize a STDF data field.
 
@@ -57,6 +71,7 @@ class StdfDataBase(abc.ABC, Generic[T]):
         self._bytes_len = StdfDataBase._parse_bytes_len(code)
         self._max_len = max_len
         self._internal_bytes: Optional[bytes] = None
+        self._missing_default = missing_default
 
     def __str__(self) -> str:
         """
@@ -167,6 +182,9 @@ class StdfDataBase(abc.ABC, Generic[T]):
             For variable-length types: includes length prefixes or special encoding
             This property is computed on-demand by calling _parse_stdf()
         """
+        if self._internal_bytes is None:
+            if self._missing_default is not None:
+                self.py_value = self._missing_default
         return self._parse_stdf()
 
     @stdf_value.setter
