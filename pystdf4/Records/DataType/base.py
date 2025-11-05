@@ -1,6 +1,6 @@
 import abc
 from functools import cached_property
-from typing import TypeVar, Generic, Optional
+from typing import TypeVar, Generic
 
 T = TypeVar("T", int, float, str, bytes)
 
@@ -15,7 +15,6 @@ class StdfDataBase(abc.ABC, Generic[T]):
         - STDF Storage Form (stdf_value): How data is stored in STDF file
           - For fixed-length types: stdf_value == internal_bytes
           - For variable-length types: stdf_value includes length prefixes
-        - Missing Data Support: Values can be None to indicate missing data according to STDF spec
 
     Data Flow:
         Set py_value -> _build_py() -> internal_bytes -> _parse_stdf() -> stdf_value
@@ -41,17 +40,12 @@ class StdfDataBase(abc.ABC, Generic[T]):
         "_bytes_len",
         "_max_len",
         "_internal_bytes",
-        "_missing_default",
     )
 
     # region Magic Methods
 
     def __init__(
-        self,
-        code: str,
-        description: str,
-        max_len: int = -1,
-        missing_default: Optional[T] = None,
+        self, code: str, description: str, max_len: int = -1, default_bytes: bytes = b""
     ):
         """
         Initialize a STDF data field.
@@ -70,8 +64,7 @@ class StdfDataBase(abc.ABC, Generic[T]):
         self._description = description
         self._bytes_len = StdfDataBase._parse_bytes_len(code)
         self._max_len = max_len
-        self._internal_bytes: Optional[bytes] = None
-        self._missing_default = missing_default
+        self.internal_bytes = default_bytes
 
     def __str__(self) -> str:
         """
@@ -80,7 +73,7 @@ class StdfDataBase(abc.ABC, Generic[T]):
         Returns:
             str: Formatted string showing code, description, and current value
         """
-        val = self.py_value if self._internal_bytes is not None else "N/A"
+        val = self.py_value
         return f"{self._code} ({self._description}): {val}"
 
     def __repr__(self) -> str:
@@ -121,8 +114,6 @@ class StdfDataBase(abc.ABC, Generic[T]):
         Raises:
             ValueError: If the internal bytes have not been set
         """
-        if self._internal_bytes is None:
-            raise ValueError(f"Internal bytes for {self._code} are not set")
         return self._internal_bytes
 
     @internal_bytes.setter
@@ -182,9 +173,6 @@ class StdfDataBase(abc.ABC, Generic[T]):
             For variable-length types: includes length prefixes or special encoding
             This property is computed on-demand by calling _parse_stdf()
         """
-        if self._internal_bytes is None:
-            if self._missing_default is not None:
-                self.py_value = self._missing_default
         return self._parse_stdf()
 
     @stdf_value.setter

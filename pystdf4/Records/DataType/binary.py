@@ -67,7 +67,7 @@ class B_1(StdfBinaryBase):
         super().__init__(
             code="B*1",
             description="Fixed length bit-encoded field (1 byte)",
-            missing_default=b"\x00",
+            default_bytes=b"\x00",
         )
 
 
@@ -83,5 +83,4 @@ class B_n(StdfBinaryBase):
             code="B*n",
             description="Variable length bit-encoded field (byte prefixed)",
             max_len=255,
-            missing_default=b"\x00",
         )
