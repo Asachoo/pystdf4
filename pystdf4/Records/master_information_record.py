@@ -200,9 +200,7 @@ class MIR(StdfRecordBase):
             "9",
             " ",
         ] = " ",
-        RTST_COD: Literal[
-            "Y", "N", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "
-        ] = " ",
+        RTST_COD: Literal["Y", "N", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "] = " ",
         PROT_COD: str = " ",
         BURN_TIM: int = 65535,
         CMOD_COD: str = " ",

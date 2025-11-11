@@ -8,6 +8,7 @@ T = TypeVar("T", int, float, str, bytes)
 # Define a generic type variable for the record type
 ElementT = TypeVar("ElementT", bound=Field)
 
+
 class StdfRecordBase(abc.ABC):
     REC_TYP: int
     REC_SUB: int
@@ -43,8 +44,6 @@ class StdfRecordBase(abc.ABC):
 
         # Check if the array has the expected length
         if count != len(arr_obj):
-            raise ValueError(
-                f"Record {arr_name} requires {count} elements, but got {len(arr_obj)}"
-            )
+            raise ValueError(f"Record {arr_name} requires {count} elements, but got {len(arr_obj)}")
 
         return [ele_type(x) for x in arr_obj]

@@ -11,7 +11,7 @@ class PyStdf4:
         self.stdf_byte_segments = list()
 
     def add_record(self, record: "StdfRecordBase"):
-        self.stdf_byte_segments.append(record.stdf_bytes)
+        pass
 
     def to_bytes(self) -> bytes:
         return b"".join(self.stdf_byte_segments)

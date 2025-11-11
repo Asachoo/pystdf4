@@ -1,11 +1,8 @@
 import abc
 import struct
-from typing import TYPE_CHECKING, Any, ClassVar, Collection, Generic, Optional, TypeVar
+from typing import Any, ClassVar, Collection, Generic, Optional, TypeVar
 
 from pystdf4.Core.dynamic_buffer import DynamicBuffer
-
-if TYPE_CHECKING:
-    from pystdf4.Core.dynamic_buffer import DynamicBuffer
 
 _T = TypeVar("_T", int, float, str, bytes)
 
@@ -38,26 +35,52 @@ class Field(abc.ABC):
         Args:
             value: The field's value. Can be any serializable type.
         """
-        self.value = value
+        self.value = self.normalize_value(value)
 
-    def pack_into(self, buffer: "DynamicBuffer", value: Any = None) -> None:
+    @classmethod
+    def normalize_value(cls, value: Any) -> Any:
+        """
+        Hook for subclasses to sanitize or convert input before storing.
+
+        Args:
+            value: The input value.
+
+        Returns:
+            The sanitized/converted value.
+        """
+        return value
+
+    def self_pack_into(self, buffer: DynamicBuffer) -> None:
         """
         Serialize (pack) this field into the provided buffer.
 
         Args:
             buffer: The `DynamicBuffer` instance to write into.
-            value: Optional override for this field's stored value.
 
         Raises:
-            ValueError: If neither an argument nor stored value is available.
+            ValueError: If no value is provided.
         """
-        value = self.value if value is None else value
-        if value is None:
-            raise ValueError("Value must be provided")
-        self._pack_into(buffer, value)
+        self.pack_into(buffer, self.value)
 
+    @classmethod
+    def pack_into(cls, buffer: DynamicBuffer, value: Any) -> None:
+        """
+        Serialize (pack) this field class into the provided buffer.
+
+        Args:
+            buffer: The `DynamicBuffer` instance to write into.
+            value: Value to pack.
+
+        Raises:
+            ValueError: If no value is provided.
+        """
+        if value is None:
+            raise ValueError("Value must be provided for class method packing")
+        cls._pack_into(buffer, value)
+
+    @classmethod
     @abc.abstractmethod
-    def _pack_into(self, buffer: "DynamicBuffer", value: Any) -> None:
+    def _pack_into(cls, buffer: DynamicBuffer, value: Any) -> None:
         """
         Subclass must implement packing logic.
 
@@ -109,15 +132,6 @@ class FixedField(Field, Generic[_T]):
     _FMT: ClassVar[str]
     _packer: ClassVar[struct.Struct]
 
-    def __init__(self, value: Optional[_T] = None):
-        """
-        Initialize the fixed-length field with an optional value.
-
-        Args:
-            value: The field's value. Can be any serializable type.
-        """
-        super().__init__(value)
-
     def __init_subclass__(cls) -> None:
         """
         Validate and initialize subclass configuration.
@@ -130,7 +144,8 @@ class FixedField(Field, Generic[_T]):
             raise ValueError(f"{cls.__name__}: Must define class variable _FMT.")
         cls._packer = struct.Struct(cls.ENDIAN + cls._FMT)
 
-    def _pack_into(self, buffer: "DynamicBuffer", value: _T):
+    @classmethod
+    def _pack_into(cls, buffer: DynamicBuffer, value: _T):
         """
         Write the fixed-length value into the buffer.
 
@@ -138,7 +153,7 @@ class FixedField(Field, Generic[_T]):
             buffer: Target DynamicBuffer.
             value: Value to serialize.
         """
-        buffer.write_struct_from_pack(self._packer, *(value,))
+        buffer.write_struct_from_pack(cls._packer, *(value,))
 
     @classmethod
     def unpack_from(cls, buf_mv: memoryview) -> _T:
@@ -151,7 +166,7 @@ class FixedField(Field, Generic[_T]):
         Returns:
             The unpacked value (int, float, bytes, etc.).
         """
-        return cls._packer.unpack_from(buffer=buf_mv)[0]
+        return cls._packer.unpack_from(buf_mv)[0]
 
 
 # endregion
@@ -175,41 +190,14 @@ class VarLenField(Field, Generic[_T]):
     """
 
     _FMT: ClassVar[str]
+    _HAS_PREFIX: ClassVar[bool] = True
 
     __slots__ = "value"
 
-    def __init__(
-        self,
-        value: Optional[Collection[_T]] = None,
-    ):
-        """
-        Initialize the variable-length field.
-
-        Args:
-            value: The collection of elements.
-            length: Optional length override.
-        """
-        self.value = value
-
-    def _pack_into(
-        self,
-        buffer: "DynamicBuffer",
-        value: Collection[_T],
-        length: Optional[int] = None,
-    ):
-        """
-        Pack a sequence of elements into the buffer.
-
-        Args:
-            buffer: Target DynamicBuffer.
-            value: Sequence of elements to pack.
-            length: Optional length override.
-
-        Raises:
-            ValueError: If no data provided.
-        """
+    @classmethod
+    def _pack_into(cls, buffer: DynamicBuffer, value: Collection[_T], length: Optional[int] = None):
         length = length or len(value)
-        buffer.write_struct(f"{self.ENDIAN}{self._FMT * length}", *value)
+        buffer.write_struct(f"{cls.ENDIAN}{cls._FMT * length}", *value)
 
     @classmethod
     def unpack_from(cls, buf_mv: memoryview) -> Collection[_T]:
@@ -240,15 +228,9 @@ class BytesField(Field):
 
     _VAR: ClassVar[bool] = False
 
-    def _pack_into(self, buffer: "DynamicBuffer", value: bytes):
-        """
-        Write raw bytes into the buffer.
-
-        Args:
-            buffer: Target DynamicBuffer.
-            value: Bytes to write.
-        """
-        if self._VAR:
+    @classmethod
+    def _pack_into(cls, buffer: DynamicBuffer, value: bytes):
+        if cls._VAR:
             value = len(value).to_bytes(1, byteorder="little") + value
         buffer.write_bytes(value)
 
@@ -298,15 +280,16 @@ class KxField(Field, Generic[_T]):
         if element_type is not None:
             cls.element_type = element_type
 
-    def _pack_into(self, buffer: DynamicBuffer, value: Any) -> None:
-        elem_type = self.element_type
+    @classmethod
+    def _pack_into(cls, buffer: DynamicBuffer, value: Collection[_T]) -> None:
+        elem_type = cls.element_type
         if issubclass(elem_type, FixedField):
             packer = elem_type._packer
             for v in value:
                 buffer.write_struct_from_pack(packer, v)
         else:
             for v in value:
-                elem_type(v).pack_into(buffer)
+                elem_type.pack_into(buffer, v)
 
     @classmethod
     def unpack_from(cls, buf_mv: memoryview) -> Collection[_T]:
@@ -314,10 +297,7 @@ class KxField(Field, Generic[_T]):
         if issubclass(elem_type, FixedField):
             element_size = elem_type._packer.size
             length = len(buf_mv) // element_size
-            return [
-                elem_type._packer.unpack_from(buf_mv, offset=i * element_size)[0]
-                for i in range(length)
-            ]
+            return [elem_type._packer.unpack_from(buf_mv, offset=i * element_size)[0] for i in range(length)]
         else:
             raise NotImplementedError()
 
@@ -363,12 +343,12 @@ class R_8(FixedField[float]):
 
 
 # Character
-class C_1(FixedField[bytes]):
+class C_1(FixedField[str]):
     _FMT = "c"
 
-    def __init__(self, value: str):
-        vb = value.encode("ascii")
-        super().__init__(vb)
+    @classmethod
+    def normalize_value(cls, value: str) -> bytes:
+        return str.encode(("" if value is None else value), "ascii")
 
 
 # endregion
@@ -377,12 +357,14 @@ class C_1(FixedField[bytes]):
 # region Variable Length Fields
 
 
-class C_n(VarLenField[bytes]):
+class C_n(VarLenField[str]):
     _FMT = "c"
 
-    def __init__(self, value: Collection[str]):
-        vs = [v.encode("ascii") for v in value]
-        super().__init__(vs)
+    @classmethod
+    def normalize_value(cls, value: Collection[str]) -> Collection[bytes]:
+        if value is None:
+            return []
+        return [str.encode(("" if v is None else v), "ascii") for v in value]
 
 
 # endregion
@@ -391,19 +373,19 @@ class C_n(VarLenField[bytes]):
 
 
 class KxU_1(KxField[int], element_type=U_1):
-    element_type = U_1
+    pass
 
 
 class KxU_2(KxField[int], element_type=U_2):
-    element_type = U_2
+    pass
 
 
 class KxC_n(KxField[str], element_type=C_n):
-    element_type = C_n
+    pass
 
 
 class KxR_4(KxField[float], element_type=R_4):
-    element_type = R_4
+    pass
 
 
 # endregion
