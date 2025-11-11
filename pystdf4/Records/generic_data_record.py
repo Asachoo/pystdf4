@@ -1,17 +1,15 @@
-from dataclasses import dataclass
+from pystdf4.Core import U_2
 
-from .DataType import U_2
-from .DataType import UInt16
-from .base import StdfRecordBase, register_record
+from .base import StdfRecordBase
 
 
-@dataclass
-@register_record(50, 10)
 class GDR(StdfRecordBase):
     """
     Generic Data Record (GDR)
 
-    Function: Contains information that does not conform to any other record type defined by the STDF specification. Such records are intended to be written under the control of job plans executing on the tester. This data may be used for any purpose that the user desires.
+    Function: Contains information that does not conform to any other record type defined by the STDF specification. Such records are
+    intended to be written under the control of job plans executing on the tester. This data may be used for any purpose that the user
+    desires.
     """
 
     REC_TYP = 50
@@ -19,7 +17,7 @@ class GDR(StdfRecordBase):
 
     # TODO: Implement GEN_DATA
 
-    FLD_CNT: UInt16 = U_2()
+    FLD_CNT: U_2
     """
     Count of data fields in record
     """
@@ -29,3 +27,5 @@ class GDR(StdfRecordBase):
     Data type code and data for one field
     """
 
+    def __init__(self, FLD_CNT: int):
+        self.FLD_CNT = U_2(FLD_CNT)

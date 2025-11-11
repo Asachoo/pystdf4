@@ -1,12 +1,8 @@
-from dataclasses import dataclass
+from pystdf4.Core import U_1
 
-from .DataType import U_1
-from .DataType import UInt8
-from .base import StdfRecordBase, register_record
+from .base import StdfRecordBase
 
 
-@dataclass
-@register_record(0, 10)
 class FAR(StdfRecordBase):
     """
     File Attributes Record (FAR)
@@ -17,11 +13,15 @@ class FAR(StdfRecordBase):
     REC_TYP = 0
     REC_SUB = 10
 
-    CPU_TYPE: UInt8 = U_1()
+    CPU_TYPE: U_1
     """
     CPU type that wrote this file
     """
-    STDF_VER: UInt8 = U_1()
+    STDF_VER: U_1
     """
     STDF version number
     """
+
+    def __init__(self, CPU_TYPE: int, STDF_VER: int):
+        self.CPU_TYPE = U_1(CPU_TYPE)
+        self.STDF_VER = U_1(STDF_VER)

@@ -1,13 +1,10 @@
-from dataclasses import dataclass, field
+from typing import Optional, Sequence
 
-from .DataType import U_2, C_n
-from .DataType import UInt16, CharVarLen
-from .base import StdfRecordBase, register_record
+from pystdf4.Core import U_2, C_n, KxU_2
+
+from .base import StdfRecordBase
 
 
-
-@dataclass
-@register_record(1, 62)
 class PGR(StdfRecordBase):
     """
     Pin Group Record (PGR)
@@ -18,19 +15,31 @@ class PGR(StdfRecordBase):
     REC_TYP = 1
     REC_SUB = 62
 
-    GRP_INDX: UInt16 = U_2()
+    GRP_INDX: U_2
     """
     Unique index associated with pin group
     """
-    GRP_NAM: CharVarLen = C_n()
+    GRP_NAM: C_n
     """
     Name of pin group
     """
-    INDX_CNT: UInt16 = U_2()
+    INDX_CNT: U_2
     """
     Count (k) of PMR indexes
     """
-    PMR_INDX: list[U_2] = field(default_factory=list)
+    PMR_INDX: KxU_2
     """
     Array of indexes for pins in the group
     """
+
+    def __init__(
+        self,
+        GRP_INDX: int,
+        INDX_CNT: int,
+        PMR_INDX: Optional[Sequence[int]] = None,
+        GRP_NAM: str = "",
+    ):
+        self.GRP_INDX = U_2(GRP_INDX)
+        self.GRP_NAM = C_n(GRP_NAM)
+        self.INDX_CNT = U_2(INDX_CNT)
+        self.PMR_INDX = KxU_2(INDX_CNT, PMR_INDX)
