@@ -1,28 +1,15 @@
-from .Data import (
-    B_1,
-    C_1,
-    I_1,
-    I_2,
-    I_4,
-    R_4,
-    R_8,
-    U_1,
-    U_2,
-    U_4,
+from .base import Field, ScalarField, SequenceField
+from .scalars import B_1, C_1, I_1, I_2, I_4, R_4, R_8, U_1, U_2, U_4
+from .sequences import (
     B_n,
     C_n,
-    Field,
     KxC_n,
     KxR_4,
     KxU_1,
     KxU_2,
-    ScalarField,
-    SequenceField,
 )
-from .dynamic_buffer import DynamicBuffer
 
 __all__ = [
-    "DynamicBuffer",
     "Field",
     "ScalarField",
     "SequenceField",

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pystdf4.Core.data_type import B_1, C_1, I_1, I_2, I_4, R_4, R_8, U_1, U_2, U_4, B_n, C_n, KxC_n, KxR_4, KxU_1, KxU_2
+from pystdf4.Core import B_1, C_1, I_1, I_2, I_4, R_4, R_8, U_1, U_2, U_4, B_n, C_n
 from pystdf4.Core.dynamic_buffer import DynamicBuffer
 
 
@@ -42,7 +42,3 @@ class StdfIOBase:
         self.U_4 = U_4()
         self.B_n = B_n()
         self.C_n = C_n()
-        self.KxC_n = KxC_n()
-        self.KxR_4 = KxR_4()
-        self.KxU_1 = KxU_1()
-        self.KxU_2 = KxU_2()

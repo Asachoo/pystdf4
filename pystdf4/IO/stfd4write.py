@@ -1,4 +1,4 @@
-from typing import Any, Literal, Optional, Sequence
+from typing import Any, Callable, Literal, Optional, Sequence
 
 from pystdf4.Records.base import Field, StdfRecordBase
 
@@ -21,6 +21,18 @@ class Stfd4Writer(StdfIOBase):
         record_length = record_end - (record_start + 4)
         self.buffer.edit_struct(record_start, "<H", record_length)
 
+    def write_fields(self, rec_typ: int, rec_sub: int, field_writer: Callable):
+        # Step 1: Write the header of the record
+        record_start = self._write_header((rec_typ, rec_sub))
+
+        # Step 2: Write the fields of the record
+        field_writer(self)
+
+        # Step 3: Update the length of the record
+        record_end = self.buffer.offset
+        record_length = record_end - (record_start + 4)
+        self.buffer.edit_struct(record_start, "<H", record_length)
+
     def _write_header(self, header: tuple[int, int]) -> int:
         """
         Write the header of a record to the file.
@@ -33,8 +45,13 @@ class Stfd4Writer(StdfIOBase):
 
     def ATR(self, MOD_TIM: int, CMD_LINE: str):
         """Audit Trail Record"""
+
         # Implementation here
-        pass
+        def write_fields(self):
+            self.U_4.pack_into(self.buffer, MOD_TIM)
+            self.C_n.pack_into(self.buffer, CMD_LINE)
+
+        self.write_fields(0, 20, write_fields)
 
     def BPS(self, SEQ_NAME: str = ""):
         """Begin Program Section Record"""
@@ -53,8 +70,13 @@ class Stfd4Writer(StdfIOBase):
 
     def FAR(self, CPU_TYPE: int, STDF_VER: int):
         """File Attributes Record"""
+
         # Implementation here
-        pass
+        def write_fields(self):
+            self.U_1.pack_into(self.buffer, CPU_TYPE)
+            self.U_1.pack_into(self.buffer, STDF_VER)
+
+        self.write_fields(0, 10, write_fields)
 
     def FTR(
         self,
@@ -171,7 +193,48 @@ class Stfd4Writer(StdfIOBase):
     ):
         """Master Information Record"""
         # Implementation here
-        pass
+
+        def write_fields(self):
+            self.U_4.pack_into(self.buffer, SETUP_T)
+            self.U_4.pack_into(self.buffer, START_T)
+            self.U_1.pack_into(self.buffer, STAT_NUM)
+            self.C_1.pack_into(self.buffer, MODE_COD)
+            self.C_1.pack_into(self.buffer, RTST_COD)
+            self.C_1.pack_into(self.buffer, PROT_COD)
+            self.U_2.pack_into(self.buffer, BURN_TIM)
+            self.C_1.pack_into(self.buffer, CMOD_COD)
+            self.C_n.pack_into(self.buffer, LOT_ID)
+            self.C_n.pack_into(self.buffer, PART_TYP)
+            self.C_n.pack_into(self.buffer, NODE_NAM)
+            self.C_n.pack_into(self.buffer, TSTR_TYP)
+            self.C_n.pack_into(self.buffer, JOB_NAM)
+            self.C_n.pack_into(self.buffer, JOB_REV)
+            self.C_n.pack_into(self.buffer, SBLOT_ID)
+            self.C_n.pack_into(self.buffer, OPER_NAM)
+            self.C_n.pack_into(self.buffer, EXEC_TYP)
+            self.C_n.pack_into(self.buffer, EXEC_VER)
+            self.C_n.pack_into(self.buffer, TEST_COD)
+            self.C_n.pack_into(self.buffer, TST_TEMP)
+            self.C_n.pack_into(self.buffer, USER_TXT)
+            self.C_n.pack_into(self.buffer, AUX_FILE)
+            self.C_n.pack_into(self.buffer, PKG_TYP)
+            self.C_n.pack_into(self.buffer, FAMLY_ID)
+            self.C_n.pack_into(self.buffer, DATE_COD)
+            self.C_n.pack_into(self.buffer, FACIL_ID)
+            self.C_n.pack_into(self.buffer, FLOOR_ID)
+            self.C_n.pack_into(self.buffer, PROC_ID)
+            self.C_n.pack_into(self.buffer, OPER_FRQ)
+            self.C_n.pack_into(self.buffer, SPEC_NAM)
+            self.C_n.pack_into(self.buffer, SPEC_VER)
+            self.C_n.pack_into(self.buffer, FLOW_ID)
+            self.C_n.pack_into(self.buffer, SETUP_ID)
+            self.C_n.pack_into(self.buffer, DSGN_REV)
+            self.C_n.pack_into(self.buffer, ENG_ID)
+            self.C_n.pack_into(self.buffer, ROM_COD)
+            self.C_n.pack_into(self.buffer, SERL_NUM)
+            self.C_n.pack_into(self.buffer, SUPR_NAM)
+
+        self.write_fields(1, 10, write_fields)
 
     def MPR(
         self,
@@ -324,8 +387,30 @@ class Stfd4Writer(StdfIOBase):
         HI_SPEC: float = 0.0,
     ):
         """Parametric Test Record"""
-        # Implementation here
-        pass
+
+        def write_fields(self):
+            self.U_4.pack_into(self.buffer, TEST_NUM)
+            self.U_1.pack_into(self.buffer, HEAD_NUM)
+            self.U_1.pack_into(self.buffer, SITE_NUM)
+            self.B_1.pack_into(self.buffer, TEST_FLG)
+            self.B_1.pack_into(self.buffer, PARM_FLG)
+            self.R_4.pack_into(self.buffer, RESULT)
+            self.C_n.pack_into(self.buffer, TEST_TXT)
+            self.C_n.pack_into(self.buffer, ALARM_ID)
+            self.B_1.pack_into(self.buffer, OPT_FLAG)
+            self.I_1.pack_into(self.buffer, RES_SCAL)
+            self.I_1.pack_into(self.buffer, LLM_SCAL)
+            self.I_1.pack_into(self.buffer, HLM_SCAL)
+            self.R_4.pack_into(self.buffer, LO_LIMIT)
+            self.R_4.pack_into(self.buffer, HI_LIMIT)
+            self.C_n.pack_into(self.buffer, UNITS)
+            self.C_n.pack_into(self.buffer, C_RESFMT)
+            self.C_n.pack_into(self.buffer, C_LLMFMT)
+            self.C_n.pack_into(self.buffer, C_HLMFMT)
+            self.R_4.pack_into(self.buffer, LO_SPEC)
+            self.R_4.pack_into(self.buffer, HI_SPEC)
+
+        self.write_fields(15, 10, write_fields)
 
     def RDR(self, NUM_BINS: int, RTST_BIN: Optional[Sequence[int]] = None):
         """Retest Data Record"""
@@ -392,8 +477,26 @@ class Stfd4Writer(StdfIOBase):
         TST_SQRS: float = 0.0,
     ):
         """Test Synopsis Record"""
-        # Implementation here
-        pass
+
+        def write_fields(self):
+            self.U_1.pack_into(self.buffer, HEAD_NUM)
+            self.U_1.pack_into(self.buffer, SITE_NUM)
+            self.C_1.pack_into(self.buffer, TEST_TYP)
+            self.U_4.pack_into(self.buffer, TEST_NUM)
+            self.U_4.pack_into(self.buffer, EXEC_CNT)
+            self.U_4.pack_into(self.buffer, FAIL_CNT)
+            self.U_4.pack_into(self.buffer, ALRM_CNT)
+            self.C_n.pack_into(self.buffer, TEST_NAM)
+            self.C_n.pack_into(self.buffer, SEQ_NAME)
+            self.C_n.pack_into(self.buffer, TEST_LBL)
+            self.B_1.pack_into(self.buffer, OPT_FLAG)
+            self.R_4.pack_into(self.buffer, TEST_TIM)
+            self.R_4.pack_into(self.buffer, TEST_MIN)
+            self.R_4.pack_into(self.buffer, TEST_MAX)
+            self.R_4.pack_into(self.buffer, TST_SUMS)
+            self.R_4.pack_into(self.buffer, TST_SQRS)
+
+        self.write_fields(10, 30, write_fields)
 
     def WCR(
         self,

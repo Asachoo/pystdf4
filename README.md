@@ -47,11 +47,23 @@ The **PyStdf4 type system** provides a structured, extensible way to represent S
 Each class encapsulates type conversion, byte parsing, and STDF serialization.
 
 ```
-StdfDataBase[T]  (Abstract Generic Base)
-├── StdfIntBase     → U_1, U_2, U_4, I_1, I_2, I_4
-├── StdfFloatBase   → R_4, R_8
-├── StdfStringBase  → C_1, C_n
-└── StdfBinaryBase  → B_1, B_n
+Field (ABC)
+├── ScalarField[_PyT]
+│   ├── U_1, U_2, U_4       # unsigned int
+│   ├── I_1, I_2, I_4       # signed int
+│   ├── R_4, R_8            # float
+│   ├── C_1                 # char → bytes
+│   └── B_1                 # raw bytes
+└── SequenceField[_PyT] (ABC)
+    ├── FixLenField[_PyT]
+    ├── VarLenField[_PyT]
+    │   ├── C_n (str → bytes)
+    │   └── B_n (bytes)
+    └── KxLenField
+        ├── KxU_1
+        ├── KxU_2
+        ├── KxC_n
+        └── KxR_4
 ```
 
 These classes standardize how data flows between **Python**, **C-style internal representations**, and **STDF binary data**.

@@ -1,7 +1,7 @@
 import abc
 from typing import Optional, Sequence, Type, TypeVar
 
-from pystdf4.Core.data_type import Field
+from pystdf4.Core import Field
 
 T = TypeVar("T", int, float, str, bytes)
 
