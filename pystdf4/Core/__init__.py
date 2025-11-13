@@ -1,4 +1,4 @@
-from .Data import (
+from .data_type import (
     B_1,
     C_1,
     I_1,
@@ -11,21 +11,11 @@ from .Data import (
     U_4,
     B_n,
     C_n,
-    Field,
-    KxC_n,
-    KxR_4,
-    KxU_1,
-    KxU_2,
-    ScalarField,
-    SequenceField,
 )
 from .dynamic_buffer import DynamicBuffer
 
 __all__ = [
     "DynamicBuffer",
-    "Field",
-    "ScalarField",
-    "SequenceField",
     "U_1",
     "U_2",
     "U_4",
@@ -38,8 +28,4 @@ __all__ = [
     "C_n",
     "B_1",
     "B_n",
-    "KxU_1",
-    "KxU_2",
-    "KxR_4",
-    "KxC_n",
 ]

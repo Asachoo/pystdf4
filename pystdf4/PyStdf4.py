@@ -1,8 +1,5 @@
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from pystdf4.Records.base import StdfRecordBase
-
 
 class PyStdf4:
     stdf_byte_segments: list[bytes]
@@ -10,7 +7,7 @@ class PyStdf4:
     def __init__(self):
         self.stdf_byte_segments = list()
 
-    def add_record(self, record: "StdfRecordBase"):
+    def add_record(self, record):
         pass
 
     def to_bytes(self) -> bytes:

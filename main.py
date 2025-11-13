@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import List
 
 from pystdf4.IO import Stfd4Writer
-from pystdf4.Records import FAR, HBR, MIR, MRR, PCR, PIR, PRR, PTR, SDR, TSR, WIR
 
 
 def parse_test_data_segment(test_data_segment: List[str]) -> tuple[float, ...]:
@@ -379,120 +378,108 @@ class StdfGenerator:
         with open(stdf_file_path, "wb") as f:
             stdf = Stfd4Writer("")
             # write FAR record
-            stdf.write_record(FAR(CPU_TYPE=2, STDF_VER=4))
+            # stdf.write_record(FAR(CPU_TYPE=2, STDF_VER=4))
+            stdf.FAR(CPU_TYPE=2, STDF_VER=4)
 
             # write MIR record
-            stdf.write_record(
-                MIR(
-                    SETUP_T=setup_time,
-                    START_T=start_time,
-                    STAT_NUM=0,
-                    BURN_TIM=0,
-                    LOT_ID=lot_id,
-                    JOB_NAM=job_name,
-                    PART_TYP="",
-                    NODE_NAM="",
-                    TSTR_TYP="",
-                )
+            stdf.MIR(
+                SETUP_T=setup_time,
+                START_T=start_time,
+                STAT_NUM=0,
+                BURN_TIM=0,
+                LOT_ID=lot_id,
+                JOB_NAM=job_name,
+                PART_TYP="",
+                NODE_NAM="",
+                TSTR_TYP="",
             )
 
             # write SDR record
-            stdf.write_record(SDR(HEAD_NUM=0, SITE_GRP=0, SITE_CNT=0))
+            stdf.SDR(HEAD_NUM=0, SITE_GRP=0, SITE_CNT=0)
 
             # write WIR record
-            stdf.write_record(WIR(HEAD_NUM=0, SITE_GRP=0, START_T=start_time, WAFER_ID=wafer_id))
+            stdf.WIR(HEAD_NUM=0, SITE_GRP=0, START_T=start_time, WAFER_ID=wafer_id)
 
             for part in self.parts:
                 # write PIR record
-                stdf.write_record(PIR(HEAD_NUM=0, SITE_NUM=part.site_num))
+                stdf.PIR(HEAD_NUM=0, SITE_NUM=part.site_num)
 
                 # write PTR records
                 for ptr in part.PTRs:
-                    stdf.write_record(
-                        PTR(
-                            HEAD_NUM=0,
-                            TEST_NUM=ptr.test_number,
-                            SITE_NUM=part.site_num,
-                            TEST_FLG=ptr.test_flag.to_bytes(1, "little"),
-                            RESULT=ptr.result,
-                            TEST_TXT=ptr.test_txt,
-                            OPT_FLAG=int(14).to_bytes(1, "little"),
-                            LO_LIMIT=ptr.lo_limit,
-                            HI_LIMIT=ptr.hi_limit,
-                            UNITS=ptr.unit,
-                            PARM_FLG=b"\x00",
-                        )
+                    stdf.PTR(
+                        HEAD_NUM=0,
+                        TEST_NUM=ptr.test_number,
+                        SITE_NUM=part.site_num,
+                        TEST_FLG=ptr.test_flag.to_bytes(1, "little"),
+                        RESULT=ptr.result,
+                        TEST_TXT=ptr.test_txt,
+                        OPT_FLAG=int(14).to_bytes(1, "little"),
+                        LO_LIMIT=ptr.lo_limit,
+                        HI_LIMIT=ptr.hi_limit,
+                        UNITS=ptr.unit,
+                        PARM_FLG=b"\x00",
                     )
 
                 if part.PRR is None:
                     raise ValueError("PRR object should not be None.")
 
                 # write PRR record
-                stdf.write_record(
-                    PRR(
-                        HEAD_NUM=0,
-                        SITE_NUM=part.site_num,
-                        PART_FLG=part.PRR.part_flag.to_bytes(1, "little"),
-                        NUM_TEST=0,
-                        HARD_BIN=part.PRR.hard_bin,
-                        SOFT_BIN=part.PRR.soft_bin,
-                        X_COORD=part.PRR.x_coord,
-                        Y_COORD=part.PRR.y_coord,
-                        TEST_T=part.PRR.test_t,
-                        PART_ID=str(part.PRR.part_id),
-                    )
+                stdf.PRR(
+                    HEAD_NUM=0,
+                    SITE_NUM=part.site_num,
+                    PART_FLG=part.PRR.part_flag.to_bytes(1, "little"),
+                    NUM_TEST=0,
+                    HARD_BIN=part.PRR.hard_bin,
+                    SOFT_BIN=part.PRR.soft_bin,
+                    X_COORD=part.PRR.x_coord,
+                    Y_COORD=part.PRR.y_coord,
+                    TEST_T=part.PRR.test_t,
+                    PART_ID=str(part.PRR.part_id),
                 )
 
             # write TSR records
             for i, test_txt in enumerate(self.test_txts, start=1):
                 failed_count = self.failed_count.get(test_txt, 0)
 
-                stdf.write_record(
-                    TSR(
-                        HEAD_NUM=0,
-                        SITE_NUM=255,
-                        TEST_NUM=i,
-                        EXEC_CNT=len(self.parts),
-                        FAIL_CNT=failed_count,
-                        TEST_NAM=test_txt,
-                        OPT_FLAG=int(255).to_bytes(1, "little"),
-                    )
+                stdf.TSR(
+                    HEAD_NUM=0,
+                    SITE_NUM=255,
+                    TEST_NUM=i,
+                    EXEC_CNT=len(self.parts),
+                    FAIL_CNT=failed_count,
+                    TEST_NAM=test_txt,
+                    OPT_FLAG=int(255).to_bytes(1, "little"),
                 )
 
             # write HBR records
-            stdf.write_record(
-                HBR(
-                    HEAD_NUM=0,
-                    SITE_NUM=255,
-                    HBIN_NUM=1,
-                    HBIN_CNT=self.passed_dut_count,
-                    HBIN_NAM="Pass",
-                )
+            stdf.HBR(
+                HEAD_NUM=0,
+                SITE_NUM=255,
+                HBIN_NUM=1,
+                HBIN_CNT=self.passed_dut_count,
+                HBIN_NAM="Pass",
             )
-            stdf.write_record(
-                HBR(
-                    HEAD_NUM=0,
-                    SITE_NUM=255,
-                    HBIN_NUM=2,
-                    HBIN_CNT=self.failed_dut_count,
-                    HBIN_NAM="Fail",
-                )
+
+            stdf.HBR(
+                HEAD_NUM=0,
+                SITE_NUM=255,
+                HBIN_NUM=2,
+                HBIN_CNT=self.failed_dut_count,
+                HBIN_NAM="Fail",
             )
 
             # write PCR record
-            stdf.write_record(
-                PCR(
-                    HEAD_NUM=0,
-                    SITE_NUM=255,
-                    PART_CNT=len(self.parts),
-                    GOOD_CNT=self.passed_dut_count,
-                )
+            stdf.PCR(
+                HEAD_NUM=0,
+                SITE_NUM=255,
+                PART_CNT=len(self.parts),
+                GOOD_CNT=self.passed_dut_count,
             )
 
             # write MRR record
-            stdf.write_record(MRR(FINISH_T=finish_time))
+            stdf.MRR(FINISH_T=finish_time)
 
-            f.write(stdf.buffer.to_bytes())
+            f.write(stdf.to_bytes())
 
 
 def convert_csv_to_stdf(

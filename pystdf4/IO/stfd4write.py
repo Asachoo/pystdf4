@@ -1,7 +1,5 @@
 from typing import Any, Callable, Literal, Optional, Sequence
 
-from pystdf4.Records.base import Field, StdfRecordBase
-
 from .base import StdfIOBase
 
 
@@ -9,17 +7,10 @@ class Stfd4Writer(StdfIOBase):
     def __init__(self, file_path: str):
         super().__init__(file_path)
 
-    def write_record(self, record: StdfRecordBase):
-        # Step 1: Write the header of the record
-        record_start = self._write_header(record.header)
+    def to_bytes(self) -> bytes:
+        self.write_buffers()
+        return self.buffer.to_bytes()
 
-        # Step 2: Write the fields of the record
-        self._write_fields(record.fields)
-
-        # Step 3: Update the length of the record
-        record_end = self.buffer.offset
-        record_length = record_end - (record_start + 4)
-        self.buffer.edit_struct(record_start, "<H", record_length)
 
     def write_fields(self, rec_typ: int, rec_sub: int, field_writer: Callable):
         # Step 1: Write the header of the record
@@ -44,9 +35,9 @@ class Stfd4Writer(StdfIOBase):
         self.buffer.offset += packer_size
         return start
 
-    def _write_fields(self, fields: Sequence[Field]):
-        for field in fields:
-            field.self_pack_into(self.buffer)
+    def write_buffers(self):
+        for scalar_field in (self.U_1, self.U_2, self.U_4, self.I_1, self.I_2, self.I_4, self.R_4, self.R_8, self.C_n, self.B_n):
+            scalar_field.flush_cache_to_buffer(self.buffer)
 
     def ATR(self, MOD_TIM: int, CMD_LINE: str):
         """Audit Trail Record"""
@@ -134,7 +125,16 @@ class Stfd4Writer(StdfIOBase):
     ):
         """Hardware Bin Record"""
         # Implementation here
-        pass
+
+        def write_fields(self):
+            self.U_1.pack_into(self.buffer, HEAD_NUM)
+            self.U_1.pack_into(self.buffer, SITE_NUM)
+            self.U_2.pack_into(self.buffer, HBIN_NUM)
+            self.U_4.pack_into(self.buffer, HBIN_CNT)
+            self.C_1.pack_into(self.buffer, HBIN_PF)
+            self.C_n.pack_into(self.buffer, HBIN_NAM)
+
+        self.write_fields(1, 40, write_fields)
 
     def MIR(
         self,
@@ -157,6 +157,7 @@ class Stfd4Writer(StdfIOBase):
             "0",
             "1",
             "2",
+            # Implementation here
             "3",
             "4",
             "5",
@@ -273,7 +274,6 @@ class Stfd4Writer(StdfIOBase):
     ):
         """Multiple-Result Parametric Record"""
         # Implementation here
-        pass
 
     def MRR(
         self,
@@ -284,7 +284,14 @@ class Stfd4Writer(StdfIOBase):
     ):
         """Master Results Record"""
         # Implementation here
-        pass
+
+        def write_fields(self):
+            self.U_4.pack_into(self.buffer, FINISH_T)
+            self.C_1.pack_into(self.buffer, DISP_COD)
+            self.C_n.pack_into(self.buffer, USR_DESC)
+            self.C_n.pack_into(self.buffer, EXC_DESC)
+
+        self.write_fields(1, 20, write_fields)
 
     def PCR(
         self,
@@ -298,7 +305,17 @@ class Stfd4Writer(StdfIOBase):
     ):
         """Part Count Record"""
         # Implementation here
-        pass
+
+        def write_fields(self):
+            self.U_1.pack_into(self.buffer, HEAD_NUM)
+            self.U_1.pack_into(self.buffer, SITE_NUM)
+            self.U_4.pack_into(self.buffer, PART_CNT)
+            self.U_4.pack_into(self.buffer, RTST_CNT)
+            self.U_4.pack_into(self.buffer, ABRT_CNT)
+            self.U_4.pack_into(self.buffer, GOOD_CNT)
+            self.U_4.pack_into(self.buffer, FUNC_CNT)
+
+        self.write_fields(1, 30, write_fields)
 
     def PGR(
         self,
@@ -318,7 +335,12 @@ class Stfd4Writer(StdfIOBase):
     ):
         """Part Information Record"""
         # Implementation here
-        pass
+
+        def write_fields(self):
+            self.U_1.pack_into(self.buffer, HEAD_NUM)
+            self.U_1.pack_into(self.buffer, SITE_NUM)
+
+        self.write_fields(5, 10, write_fields)
 
     def PLR(
         self,
@@ -366,7 +388,22 @@ class Stfd4Writer(StdfIOBase):
     ):
         """Part Results Record"""
         # Implementation here
-        pass
+
+        def write_fields(self):
+            self.U_1.pack_into(self.buffer, HEAD_NUM)
+            self.U_1.pack_into(self.buffer, SITE_NUM)
+            self.B_1.pack_into(self.buffer, PART_FLG)
+            self.U_2.pack_into(self.buffer, NUM_TEST)
+            self.U_2.pack_into(self.buffer, HARD_BIN)
+            self.U_2.pack_into(self.buffer, SOFT_BIN)
+            self.I_2.pack_into(self.buffer, X_COORD)
+            self.I_2.pack_into(self.buffer, Y_COORD)
+            self.U_4.pack_into(self.buffer, TEST_T)
+            self.C_n.pack_into(self.buffer, PART_ID)
+            self.C_n.pack_into(self.buffer, PART_TXT)
+            self.B_n.pack_into(self.buffer, PART_FIX)
+
+        self.write_fields(5, 20, write_fields)
 
     def PTR(
         self,
@@ -460,7 +497,30 @@ class Stfd4Writer(StdfIOBase):
     ):
         """Site Description Record"""
         # Implementation here
-        pass
+
+        def write_fields(self):
+            self.U_1.pack_into(self.buffer, HEAD_NUM)
+            self.U_1.pack_into(self.buffer, SITE_GRP)
+            self.U_1.pack_into(self.buffer, SITE_CNT)
+            # self.KxU_1.pack_into(SITE_CNT, SITE_NUM)
+            self.C_n.pack_into(self.buffer, HAND_TYP)
+            self.C_n.pack_into(self.buffer, HAND_ID)
+            self.C_n.pack_into(self.buffer, CARD_TYP)
+            self.C_n.pack_into(self.buffer, CARD_ID)
+            self.C_n.pack_into(self.buffer, LOAD_TYP)
+            self.C_n.pack_into(self.buffer, LOAD_ID)
+            self.C_n.pack_into(self.buffer, DIB_TYP)
+            self.C_n.pack_into(self.buffer, DIB_ID)
+            self.C_n.pack_into(self.buffer, CABL_TYP)
+            self.C_n.pack_into(self.buffer, CABL_ID)
+            self.C_n.pack_into(self.buffer, CONT_TYP)
+            self.C_n.pack_into(self.buffer, CONT_ID)
+            self.C_n.pack_into(self.buffer, LASR_TYP)
+            self.C_n.pack_into(self.buffer, LASR_ID)
+            self.C_n.pack_into(self.buffer, EXTR_TYP)
+            self.C_n.pack_into(self.buffer, EXTR_ID)
+
+        self.write_fields(1, 80, write_fields)
 
     def TSR(
         self,
@@ -482,6 +542,7 @@ class Stfd4Writer(StdfIOBase):
         TST_SQRS: float = 0.0,
     ):
         """Test Synopsis Record"""
+        # Implementation here
 
         def write_fields(self):
             self.U_1.pack_into(self.buffer, HEAD_NUM)
@@ -527,8 +588,15 @@ class Stfd4Writer(StdfIOBase):
         WAFER_ID: str = "",
     ):
         """Wafer Information Record"""
+
         # Implementation here
-        pass
+        def write_fields(self):
+            self.U_1.pack_into(self.buffer, HEAD_NUM)
+            self.U_1.pack_into(self.buffer, SITE_GRP)
+            self.U_4.pack_into(self.buffer, START_T)
+            self.C_n.pack_into(self.buffer, WAFER_ID)
+
+        self.write_fields(2, 10, write_fields)
 
     def WRR(
         self,

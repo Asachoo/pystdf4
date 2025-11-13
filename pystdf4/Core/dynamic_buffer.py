@@ -12,7 +12,7 @@ class DynamicBuffer:
 
     __slots__ = ("_buffer", "_mv", "_capacity", "offset")
 
-    def __init__(self, initial_capacity: int = 1024):
+    def __init__(self, initial_capacity: int = 1024**2):
         """
         Initialize the buffer.
 
