@@ -1,6 +1,4 @@
-from typing import Any, Sequence
-
-from pystdf4.Core.dynamic_buffer import DynamicBuffer
+from typing import Sequence
 
 from .base import KxLenField, VarLenField
 from .scalars import R_4, U_1, U_2
@@ -12,15 +10,14 @@ class C_n(VarLenField[str, bytes]):
     _fmt = "c"
 
     @classmethod
-    def _normalize(cls, value: Sequence[str]) -> Sequence[Any]:
-        return [s.encode("ascii") for s in value]
+    def _normalize(cls, value: Sequence[str]) -> bytes:
+        return "".join(value).encode("ascii")
 
 
 class B_n(VarLenField[bytes, bytes]):
     @classmethod
-    def _pack_into(cls, buffer: DynamicBuffer, value: Sequence[bytes]) -> None:
-        v = len(value).to_bytes(4, "little") + b"".join(value)
-        buffer.write_bytes(v)
+    def _normalize(cls, value: Sequence[bytes]) -> bytes:
+        return b"".join(value)
 
 
 # endregion

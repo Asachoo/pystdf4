@@ -62,8 +62,7 @@ class DynamicBuffer:
         """
         Ensure sufficient capacity for the next write of `size` bytes.
         """
-        target = self.offset + size
-        if target > self._capacity:
+        if (target := self.offset + size) > self._capacity:
             # Expand at least double or fit the target size
             desired = self._capacity
             while desired < target:

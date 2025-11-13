@@ -37,7 +37,12 @@ class Stfd4Writer(StdfIOBase):
         """
         Write the header of a record to the file.
         """
-        return self.buffer.write_struct("<HBB", 0, *header)
+        packer_size = self.header_packer.size
+        self.buffer._ensure_capacity(packer_size)
+        start = self.buffer.offset
+        self.header_packer.pack_into(self.buffer._mv, start, 0, *header)
+        self.buffer.offset += packer_size
+        return start
 
     def _write_fields(self, fields: Sequence[Field]):
         for field in fields:

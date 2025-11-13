@@ -109,10 +109,14 @@ class VarLenField(SequenceField[_T_in, _T_out]):
     _fmt: ClassVar[str] = ""
 
     @classmethod
-    def _pack_into(cls, buffer: DynamicBuffer, value: Sequence[_T_out]) -> None:
-        length = len(value)
-        packer = Struct(cls._endian + "H" + cls._fmt * length)
-        buffer.write_struct_from_pack(packer, length, *value)
+    @abstractmethod
+    def _normalize(cls, value: Sequence[_T_in]) -> bytes:
+        raise NotImplementedError()
+
+    @classmethod
+    def _pack_into(cls, buffer: DynamicBuffer, value: bytes) -> None:
+        v = len(value).to_bytes(4, "little") + value
+        buffer.write_bytes(v)
 
     @classmethod
     def _unpack_from(cls, buf_mv: memoryview) -> Sequence[_T_out]:
