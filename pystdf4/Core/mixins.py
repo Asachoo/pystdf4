@@ -25,9 +25,9 @@ class CacheMixin:
         cls.cached_sizes = []
 
     @classmethod
-    def _enqueue_value(cls, value: Any, index: int, size: int):
+    def _enqueue_value(cls, value: Any, offset: int, size: int):
         """Cache a value and its buffer offset."""
-        cls.buffer_offsets.append(index)
+        cls.buffer_offsets.append(offset)
         cls.cached_values.append(value)
         cls.cached_sizes.append(size)
 

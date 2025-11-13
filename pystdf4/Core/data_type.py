@@ -185,9 +185,9 @@ class C_1(ByteBasedField):
     field_size = 1
 
     @classmethod
-    def _enqueue_value(cls, value: str, index: int, size: int):
+    def _enqueue_value(cls, value: str, offset: int, size: int):
         """Encode ASCII character before caching."""
-        super()._enqueue_value(value.encode("ascii"), index, size)
+        super()._enqueue_value(value.encode("ascii"), offset, size)
 
 
 class B_1(ByteBasedField):
