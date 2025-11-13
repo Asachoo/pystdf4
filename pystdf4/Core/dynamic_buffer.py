@@ -135,7 +135,7 @@ class DynamicBuffer:
         """
         end = offset + len(data)
 
-        # Ensure that the bytes to edit has been writted before
+        # Ensure that the bytes to edit have been written before
         if end > self.offset:
             raise ValueError(f"Edit beyond written region (end={end}, size={self.offset})")
 
