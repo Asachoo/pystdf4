@@ -1,10 +1,6 @@
-import sys
 from pathlib import Path
 
-if sys.version_info >= (3, 11):
-    import tomllib as toml
-else:
-    import tomli as toml
+import tomli as toml
 
 from .IO.stfd4write import Stfd4Writer
 
