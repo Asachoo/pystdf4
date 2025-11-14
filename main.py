@@ -5,30 +5,30 @@ import struct
 import sys
 from itertools import zip_longest
 from pathlib import Path
-from typing import List
+from typing import List, Optional, Tuple
 
 from pystdf4.IO import Stfd4Writer
 
 
-def parse_test_data_segment(test_data_segment: List[str]) -> tuple[float, ...]:
+def parse_test_data_segment(test_data_segment: List[str]) -> Tuple[float, ...]:
     return tuple(map(safg_float, test_data_segment))
 
 
-def parse_coordinates_segment(coordinates_segment: List[str]) -> tuple[int, ...]:
+def parse_coordinates_segment(coordinates_segment: List[str]) -> Tuple[int, ...]:
     return tuple(map(int, coordinates_segment))
 
 
-def parse_moving_limit_segment(moving_limit_segment: str) -> tuple[str, ...]:
+def parse_moving_limit_segment(moving_limit_segment: str) -> Tuple[str, ...]:
     return tuple(moving_limit_segment.split(";"))
 
 
-def parse_bins_segment(bins_segment: List[str]) -> tuple[int, ...]:
+def parse_bins_segment(bins_segment: List[str]) -> Tuple[int, ...]:
     return tuple(map(int, bins_segment))
 
 
 def parse_site_info_segment(
     site_info_segment: List[str],
-) -> tuple[tuple[int, ...], ...]:
+) -> Tuple[Tuple[int, ...], ...]:
     site_number = len(site_info_segment) // 3
     if site_number * 3 != len(site_info_segment):
         raise ValueError("Site info segment should have 3 values per site.")
@@ -92,7 +92,7 @@ class PTR_D:
         lo_limit: float,
         hi_limit: float,
         unit: str,
-        test_pass: bool | None,
+        test_pass: Optional[bool],
     ):
         """
         Part test parameters
@@ -148,15 +148,15 @@ class PRR_D:
 
 class Part:
     __slots__ = ("site_num", "PTRs", "PRR")
-    PRR: PRR_D | None
-    PTRs: tuple[PTR_D, ...]
+    PRR: Optional[PRR_D]
+    PTRs: Tuple[PTR_D, ...]
 
     def __init__(self, site_num: int = -1):
         self.site_num = site_num
         self.PRR = None
         self.PTRs = tuple()
 
-    def update_ptrs(self, ptrs: tuple[PTR_D, ...]):
+    def update_ptrs(self, ptrs: Tuple[PTR_D, ...]):
         self.PTRs = ptrs
 
     def edit_prr(
@@ -195,21 +195,21 @@ class StdfGenerator:
 
     def __init__(
         self,
-        lower_limits: tuple[float, ...],
-        higher_limits: tuple[float, ...],
-        units: tuple[str, ...],
-        test_txts: tuple[str, ...],
-        site_indices: tuple[int, ...],
+        lower_limits: Tuple[float, ...],
+        higher_limits: Tuple[float, ...],
+        units: Tuple[str, ...],
+        test_txts: Tuple[str, ...],
+        site_indices: Tuple[int, ...],
     ):
         """
         Generate parts based on the given parameters.
 
         Args:
-            lower_limits (tuple[float, ...]): _description_
-            higher_limits (tuple[float, ...]): _description_
-            units (tuple[str, ...]): _description_
-            test_txts (tuple[str, ...]): _description_
-            site_indices (tuple[int, ...]): _description_
+            lower_limits (Tuple[float, ...]): _description_
+            higher_limits (Tuple[float, ...]): _description_
+            units (Tuple[str, ...]): _description_
+            test_txts (Tuple[str, ...]): _description_
+            site_indices (Tuple[int, ...]): _description_
         """
         # Check input parameters validity
         if len(lower_limits) != len(higher_limits) or len(lower_limits) != len(units):
@@ -280,18 +280,18 @@ class StdfGenerator:
 
     def evaluate_part_test(
         self,
-        test_results: tuple[float, ...],
-        coordinates: tuple[int, ...],
-        moving_limit: tuple[str, ...],
-        bins: tuple[int, ...],
-        sites_information: tuple[tuple[int, ...], ...],
+        test_results: Tuple[float, ...],
+        coordinates: Tuple[int, ...],
+        moving_limit: Tuple[str, ...],
+        bins: Tuple[int, ...],
+        sites_information: Tuple[Tuple[int, ...], ...],
         part_id: int,
     ):
         """
         Evaluate the test result and return the test flag.
 
         Args:
-            test_results (tuple[float, ...]): _description_
+            test_results (Tuple[float, ...]): _description_
         """
         # Check input parameters validity
         if len(test_results) != self.test_count:
