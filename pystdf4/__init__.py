@@ -1,9 +1,4 @@
-from pathlib import Path
-
-import tomli as toml
-
 from .IO.stfd4write import Stfd4Writer
 
-pyproject = toml.loads((Path(__file__).parent.parent / "pyproject.toml").read_text())
-__version__ = pyproject["project"]["version"]
+__version__ = "0.1.0"
 __all__ = ["Stfd4Writer"]
