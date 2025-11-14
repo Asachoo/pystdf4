@@ -25,15 +25,12 @@ jobs:
       - name: Install uv
         uses: yezz123/setup-uv@v4
 
-      - name: Create virtual environment & install dependencies
+      - name: Create virtual environment & install dependencies & activate virtual environment
         run: |
           uv sync --group dev --python ${{ matrix.python-version }}
-          uv pip install -e .
-        shell: bash
-
-      - name: Activate virtual environment
-        run: |
+          uv venv
           source .venv/bin/activate
+          uv pip install -e .
         shell: bash
 
       - name: Test import (minimal dependencies)
