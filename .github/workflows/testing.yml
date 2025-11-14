@@ -14,9 +14,13 @@ jobs:
     permissions:
       checks: write
       pull-requests: write
+
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+
+    env:
+      VENV: .venv-${{ matrix.python-version }}
 
     steps:
       - name: Checkout repository
@@ -25,24 +29,22 @@ jobs:
       - name: Install uv
         uses: yezz123/setup-uv@v4
 
-      - name: Create virtual environment & install dependencies & activate virtual environment
+      - name: Create Virtual Environment and Install Dependencies
         run: |
-          uv sync --group dev --python ${{ matrix.python-version }}
-          uv venv
-          source .venv/bin/activate
-          uv pip install -e .
+          uv venv $VENV --python ${{ matrix.python-version }} --clear
+          $VENV/bin/uv sync --group dev --python ${{ matrix.python-version }}
+          $VENV/bin/uv pip install -e .
         shell: bash
 
-      - name: Test import (minimal dependencies)
+      - name: Test import (minimal deps)
         run: |
-          source .venv/bin/activate
-          python -c "import pystdf4; print(pystdf4.__version__)"
+          $VENV/bin/python -c "import pystdf4; print(pystdf4.__version__)"
         shell: bash
 
       - name: Run pytest
         run: |
-          source .venv/bin/activate
-          pytest -v tests \
+          mkdir -p test-results
+          $VENV/bin/pytest -v tests \
             --junitxml=test-results/junit-${{ matrix.python-version }}.xml \
             --junit-prefix=${{ matrix.python-version }}
         shell: bash
@@ -58,8 +60,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          source .venv/bin/activate
-          coveralls --service=github
+          $VENV/bin/coveralls --service=github
+        shell: bash
 
   publish-test-results:
     name: Publish Test Results
@@ -69,6 +71,7 @@ jobs:
       checks: write
       pull-requests: write
     if: always()
+
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
