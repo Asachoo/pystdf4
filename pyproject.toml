@@ -24,5 +24,6 @@ docstring-code-format = true
 
 [dependency-groups]
 dev = [
+ "coveralls>=4.0.1",
  "pytest>=8.3.5",
 ]

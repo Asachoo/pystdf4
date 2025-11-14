@@ -29,6 +29,7 @@ jobs:
         run: |
           uv sync --group dev --python ${{ matrix.python-version }} 
           uv pip install -e .
+          source .venv/bin/activate
         shell: bash
 
       - name: Test import (minimal dependencies)
@@ -36,7 +37,7 @@ jobs:
 
       - name: Run pytest
         run: |
-          python -m pytest -v tests \
+          pytest -v tests \
             --junitxml=test-results/junit-${{ matrix.python-version }}.xml \
             --junit-prefix=${{ matrix.python-version }}
         shell: bash
@@ -52,7 +53,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          pip install coveralls
           coveralls --service=github
 
   publish-test-results:

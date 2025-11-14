@@ -29,4 +29,5 @@ jobs:
       run: |
         uv sync --python ${{ matrix.python-version }} --no-dev
         uv pip install ruff
+        source .venv/bin/activate
         ruff check --output-format=github .
