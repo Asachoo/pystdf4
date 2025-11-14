@@ -1,4 +1,4 @@
-from typing import Any, Callable, Literal, Optional, Sequence
+from typing import Any, Callable, Literal, Optional, Sequence, Tuple
 
 from .base import StdfIOBase
 
@@ -11,7 +11,6 @@ class Stfd4Writer(StdfIOBase):
         self.write_buffers()
         return self.buffer.to_bytes()
 
-
     def write_fields(self, rec_typ: int, rec_sub: int, field_writer: Callable):
         # Step 1: Write the header of the record
         record_start = self._write_header((rec_typ, rec_sub))
@@ -22,9 +21,9 @@ class Stfd4Writer(StdfIOBase):
         # Step 3: Update the length of the record
         record_end = self.buffer.offset
         record_length = record_end - (record_start + 4)
-        self.buffer.edit_struct(record_start, "<H", record_length)
+        self.buffer._mv[record_start : record_start + 2] = record_length.to_bytes(2, byteorder="little")
 
-    def _write_header(self, header: tuple[int, int]) -> int:
+    def _write_header(self, header: Tuple[int, int]) -> int:
         """
         Write the header of a record to the file.
         """
@@ -36,7 +35,7 @@ class Stfd4Writer(StdfIOBase):
         return start
 
     def write_buffers(self):
-        for scalar_field in (self.U_1, self.U_2, self.U_4, self.I_1, self.I_2, self.I_4, self.R_4, self.R_8, self.C_n, self.B_n):
+        for scalar_field in (self.U_1, self.U_2, self.U_4, self.I_1, self.I_2, self.I_4, self.R_4, self.R_8):
             scalar_field.flush_cache_to_buffer(self.buffer)
 
     def ATR(self, MOD_TIM: int, CMD_LINE: str):
