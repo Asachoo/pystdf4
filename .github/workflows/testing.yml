@@ -33,6 +33,7 @@ jobs:
         run: |
           uv venv $VENV --python ${{ matrix.python-version }} --clear
           uv sync --group dev --python $VENV/bin/python
+          uv add pytest coveralls
           uv pip install -e . --python $VENV/bin/python
         shell: bash
 
