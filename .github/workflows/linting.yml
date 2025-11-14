@@ -1,0 +1,31 @@
+name: Code Linting
+
+on: [push, pull_request]
+
+jobs:
+  Tests:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      id-token: write
+      pull-requests: write
+    strategy:
+      matrix:
+        python-version: ['3.12']
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install uv
+      uses: yezz123/setup-uv@v4
+
+    - name: Lint with Ruff
+      run: |
+        uv pip install ruff
+        ruff check --output-format=github .
