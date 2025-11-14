@@ -27,5 +27,6 @@ jobs:
 
     - name: Lint with Ruff
       run: |
+        uv sync --python ${{ matrix.python-version }} --no-dev
         uv pip install ruff
         ruff check --output-format=github .
