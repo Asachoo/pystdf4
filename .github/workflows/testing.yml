@@ -32,8 +32,8 @@ jobs:
       - name: Create Virtual Environment and Install Dependencies
         run: |
           uv venv $VENV --python ${{ matrix.python-version }} --clear
-          $VENV/bin/uv sync --group dev --python ${{ matrix.python-version }}
-          $VENV/bin/uv pip install -e .
+          uv sync --group dev --python $VENV/bin/python
+          uv pip install -e . --python $VENV/bin/python
         shell: bash
 
       - name: Test import (minimal deps)
