@@ -35,11 +35,13 @@ jobs:
 
       - name: Test import (minimal dependencies)
         run: |
+          source .venv/bin/activate
           python -c "import pystdf4; print(pystdf4.__version__)"
         shell: bash
 
       - name: Run pytest
         run: |
+          source .venv/bin/activate
           pytest -v tests \
             --junitxml=test-results/junit-${{ matrix.python-version }}.xml \
             --junit-prefix=${{ matrix.python-version }}
@@ -56,6 +58,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          source .venv/bin/activate
           coveralls --service=github
 
   publish-test-results:
