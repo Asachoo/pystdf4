@@ -31,7 +31,7 @@ class TestFieldBase:
 class TestImmediateField:
     class DummyImmediate(ImmediateField):
         @staticmethod
-        def _normalize_value(value):
+        def _normalize_value(value, size=0):
             return value
 
     def setup_method(self):

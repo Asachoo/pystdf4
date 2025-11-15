@@ -1,4 +1,4 @@
-from pystdf4.Core.data_base import DeferredField, ImmediateField
+from pystdf4.Core.data_base import ArrayField, DeferredField, ImmediateField
 
 # ============================================================
 # Numeric Field Implementations
@@ -46,7 +46,15 @@ class C_1(ImmediateField):
     field_size = 1
 
     @staticmethod
-    def _normalize_value(value: str) -> bytes:
+    def _normalize_value(value: str, size: int = 0) -> bytes:
+        return value.encode("ascii")
+
+
+class C_12(ImmediateField):
+    field_size = 12
+
+    @staticmethod
+    def _normalize_value(value: str, size: int = 0) -> bytes:
         return value.encode("ascii")
 
 
@@ -54,17 +62,56 @@ class B_1(ImmediateField):
     field_size = 1
 
     @staticmethod
-    def _normalize_value(value: bytes) -> bytes:
+    def _normalize_value(value: bytes, size: int = 0) -> bytes:
+        return value
+
+
+class B_6(ImmediateField):
+    field_size = 6
+
+    @staticmethod
+    def _normalize_value(value: bytes, size: int = 0) -> bytes:
         return value
 
 
 class C_n(ImmediateField):
     @staticmethod
-    def _normalize_value(value: str) -> bytes:
+    def _normalize_value(value: str, size: int = 0) -> bytes:
         return ImmediateField._pascal_bytes(value.encode("ascii"))
 
 
 class B_n(ImmediateField):
     @staticmethod
-    def _normalize_value(value: bytes) -> bytes:
+    def _normalize_value(value: bytes, size: int = 0) -> bytes:
         return ImmediateField._pascal_bytes(value)
+
+
+class C_f(ImmediateField):
+    @staticmethod
+    def _normalize_value(value: bytes, size: int = 0) -> bytes:
+        return ImmediateField._left_justified_bytes(value, size, b" ")
+
+
+# ============================================================
+# Array Field Implementations
+# ============================================================
+
+
+class kxU_1(ArrayField):
+    element_type = U_1
+
+
+class kxU_2(ArrayField):
+    element_type = U_2
+
+
+class kxC_n(ArrayField):
+    element_type = C_n
+
+
+class kxR_4(ArrayField):
+    element_type = R_4
+
+
+# class kxN_1(ArrayField):
+#     element_type = N_1

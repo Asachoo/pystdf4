@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from struct import Struct
-from typing import Any, ClassVar, Generic, Sequence, TypeVar
+from typing import Any, ClassVar, Generic, Optional, Sequence, Type, TypeVar
 
 from pystdf4.Core.dynamic_buffer import DynamicBuffer
 from pystdf4.Core.mixins import CacheMixin
@@ -19,7 +19,7 @@ pyT = TypeVar("pyT", int, float, str, bytes)
 class FieldBase(ABC, Generic[pyT]):
     @classmethod
     @abstractmethod
-    def pack_into(cls, buffer: DynamicBuffer, value: pyT):
+    def pack_into(cls, buffer: DynamicBuffer, value: pyT, size: int = 0):
         raise NotImplementedError()
 
     @classmethod
@@ -42,8 +42,8 @@ class ImmediateField(FieldBase[pyT]):
     field_size: ClassVar[int] = 0
 
     @classmethod
-    def pack_into(cls, buffer: DynamicBuffer, value: pyT):
-        data = cls._normalize_value(value)
+    def pack_into(cls, buffer: DynamicBuffer, value: pyT, size: int = 0):
+        data = cls._normalize_value(value, size)
         field_size = cls.field_size if cls.field_size else len(data)
         buffer._ensure_capacity(field_size)
         buffer._mv[buffer.offset : buffer.offset + field_size] = data
@@ -55,8 +55,12 @@ class ImmediateField(FieldBase[pyT]):
         return bytes((len(value),)) + value
 
     @staticmethod
+    def _left_justified_bytes(value: bytes, size: int, fill_byte: bytes) -> bytes:
+        return value.ljust(size, fill_byte)
+
+    @staticmethod
     @abstractmethod
-    def _normalize_value(value: Any) -> bytes:
+    def _normalize_value(value: Any, size: int = 0) -> bytes:
         raise NotImplementedError()
 
 
@@ -72,7 +76,7 @@ class DeferredField(FieldBase[pyT], CacheMixin):
         cls.field_size = Struct(f"{cls.endian}{cls.num_elements}{cls.struct_format}").size
 
     @classmethod
-    def pack_into(cls, buffer: DynamicBuffer, value: pyT):
+    def pack_into(cls, buffer: DynamicBuffer, value: pyT, size: int = 0):
         """Reserve space, cache the value, and advance the buffer offset."""
         buffer._ensure_capacity(cls.field_size)
         cls._enqueue_value(value, buffer.offset, cls.field_size)
@@ -89,3 +93,17 @@ class DeferredField(FieldBase[pyT], CacheMixin):
         count = len(cls.buffer_offsets) * cls.num_elements
         packer = Struct(f"{cls.endian}{count}{cls.struct_format}")
         return packer.pack(*sequence)
+
+
+class ArrayField:
+    element_type: ClassVar[Type[FieldBase]]
+
+    @classmethod
+    def pack_into(cls, buffer: DynamicBuffer, value: Optional[Sequence[pyT]], size: int):
+        if value is None:
+            return
+        if len(value) > size:
+            value = value[:size]
+
+        for element in value:
+            cls.element_type.pack_into(buffer, element)
