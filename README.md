@@ -56,64 +56,6 @@ with Stdf4Writer('example.stdf') as stdf:
 
 ---
 
-## 📘 STDF v4 Data Types
-
-STDF defines compact type codes specifying how values are stored and interpreted in records. Below is a concise overview of commonly used types:
-
-| Code     | Description                                   | C Type Specifier | Notes                                        |
-| :------- | :-------------------------------------------- | :--------------- | :------------------------------------------- |
-| `C*12`   | Fixed-length char (12 bytes)                  | `char[12]`       | Left-justified, pad with spaces              |
-| `C*n`    | Variable-length char (1-byte length prefix)   | `char[]`         | Length 0–255                                 |
-| `C*f`    | External-length string                        | `char[]`         | Length defined by another field              |
-| `U*1`    | 1-byte unsigned integer                       | `unsigned char`  | 0–255                                        |
-| `U*2`    | 2-byte unsigned integer                       | `unsigned short` | 0–65,535                                     |
-| `U*4`    | 4-byte unsigned integer                       | `unsigned long`  | 0–4,294,967,295                              |
-| `I*1`    | 1-byte signed integer                         | `char`           | –128 to 127                                  |
-| `I*2`    | 2-byte signed integer                         | `short`          | –32,768 to 32,767                            |
-| `I*4`    | 4-byte signed integer                         | `long`           | –2,147,483,648 to 2,147,483,647              |
-| `R*4`    | 4-byte float (IEEE 754)                       | `float`          | Single precision                             |
-| `R*8`    | 8-byte float (IEEE 754)                       | `double`         | Double precision                             |
-| `B*6`    | Fixed-length binary (6 bytes)                 | `char[6]`        | Raw binary                                   |
-| `V*n`    | Variable-type field                           | —                | First byte = type code, up to 255 bytes data |
-| `B*n`    | Variable-length binary (1-byte length prefix) | `char[]`         | Data starts at second byte                   |
-| `D*n`    | Variable-length bit field                     | `char[]`         | First two bytes = bit count; padding zeros   |
-| `N*1`    | Nibble array (4-bit units)                    | `char`           | High nibble zeroed if odd count              |
-| `kxTYPE` | Array of specified type                       | `TYPE[]`         | Length determined by another field           |
-
-_For full STDF v4 type reference, see `pystdf4/doc/stdf-spec.pdf`._
-
----
-
-## 🧱 PyStdf4 Data Model
-
-**Field hierarchy for writing STDF records:**
-
-```
-
-FieldBase(pyT) (ABC)
-├── ImmediateField(pyT)
-│   ├── C_1, C_12, B_1, B_6
-│   ├── C_n, B_n, C_f
-│   └── D_n, N_1 [⚠️ Not Implemented Yet]
-│
-├── DeferredField(pyT)
-│   ├── U_1, U_2, U_4
-│   ├── I_1, I_2, I_4
-│   └── R_4, R_8
-│
-├── VariableField [⚠️ Not Implemented Yet]
-│   └── V_n
-│
-└── ArrayField
-    ├── kxU_1, kxU_2, kxC_n
-    └── kxN_1 [⚠️ Not Implemented Yet]
-
-```
-
-These classes handle type conversion, byte parsing, and STDF serialization, ensuring consistency between Python objects and STDF binary data.
-
----
-
 ## 📋 STDF Record Implementation Status
 
 | Record | Type | Sub | Status        | Notes                  |
@@ -143,6 +85,64 @@ These classes handle type conversion, byte parsing, and STDF serialization, ensu
 | EPS    | 20   | 20  | ✔️ Complete   | Program section end    |
 | GDR    | 50   | 10  | ⚠️ Incomplete | User-defined data      |
 | DTR    | 50   | 30  | ✔️ Complete   | Datalog comments       |
+
+---
+
+## 📘 STDF v4 Data Types and Python Implementation
+
+### STDF Type Codes
+
+STDF defines compact type codes specifying how values are stored and interpreted in records. Below is a concise overview of commonly used types:
+
+| Code     | Description                                   | C Type Specifier | Notes                                        |
+| :------- | :-------------------------------------------- | :--------------- | :------------------------------------------- |
+| `C*12`   | Fixed-length char (12 bytes)                  | `char[12]`       | Left-justified, pad with spaces              |
+| `C*n`    | Variable-length char (1-byte length prefix)   | `char[]`         | Length 0–255                                 |
+| `C*f`    | External-length string                        | `char[]`         | Length defined by another field              |
+| `U*1`    | 1-byte unsigned integer                       | `unsigned char`  | 0–255                                        |
+| `U*2`    | 2-byte unsigned integer                       | `unsigned short` | 0–65,535                                     |
+| `U*4`    | 4-byte unsigned integer                       | `unsigned long`  | 0–4,294,967,295                              |
+| `I*1`    | 1-byte signed integer                         | `char`           | –128 to 127                                  |
+| `I*2`    | 2-byte signed integer                         | `short`          | –32,768 to 32,767                            |
+| `I*4`    | 4-byte signed integer                         | `long`           | –2,147,483,648 to 2,147,483,647              |
+| `R*4`    | 4-byte float (IEEE 754)                       | `float`          | Single precision                             |
+| `R*8`    | 8-byte float (IEEE 754)                       | `double`         | Double precision                             |
+| `B*6`    | Fixed-length binary (6 bytes)                 | `char[6]`        | Raw binary                                   |
+| `V*n`    | Variable-type field                           | —                | First byte = type code, up to 255 bytes data |
+| `B*n`    | Variable-length binary (1-byte length prefix) | `char[]`         | Data starts at second byte                   |
+| `D*n`    | Variable-length bit field                     | `char[]`         | First two bytes = bit count; padding zeros   |
+| `N*1`    | Nibble array (4-bit units)                    | `char`           | High nibble zeroed if odd count              |
+| `kxTYPE` | Array of specified type                       | `TYPE[]`         | Length determined by another field           |
+
+_For full STDF v4 type reference, see `pystdf4/doc/stdf-spec.pdf`._
+
+### Python Implementation
+
+PyStdf4 uses a hierarchy of classes to represent STDF fields and records, with each class implementing a specific type of field or record. The hierarchy is as follows:
+
+```
+
+FieldBase(pyT) (ABC)
+├── ImmediateField(pyT)
+│   ├── C_1, C_12, B_1, B_6
+│   ├── C_n, B_n, C_f
+│   └── D_n, N_1 [⚠️ Not Implemented Yet]
+│
+├── DeferredField(pyT)
+│   ├── U_1, U_2, U_4
+│   ├── I_1, I_2, I_4
+│   └── R_4, R_8
+│
+├── VariableField
+│   └── V_n [⚠️ Not Implemented Yet]
+│
+└── ArrayField
+    ├── kxU_1, kxU_2, kxC_n
+    └── kxN_1 [⚠️ Not Implemented Yet]
+
+```
+
+These classes handle type conversion, byte parsing, and STDF serialization, ensuring consistency between Python objects and STDF binary data.
 
 ---
 
