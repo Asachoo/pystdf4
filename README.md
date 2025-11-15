@@ -102,9 +102,11 @@ FieldBase(pyT) (ABC)
 │   └── R_4, R_8
 │
 ├── VariableField [⚠️ Not Implemented Yet]
+│   └── V_n
+│
 └── ArrayField
-├── kxU_1, kxU_2, kxC_n
-└── kxN_1 [⚠️ Not Implemented Yet]
+    ├── kxU_1, kxU_2, kxC_n
+    └── kxN_1 [⚠️ Not Implemented Yet]
 
 ```
 
@@ -124,9 +126,9 @@ These classes handle type conversion, byte parsing, and STDF serialization, ensu
 | HBR    | 1    | 40  | ✔️ Complete   | Physical bin counts    |
 | SBR    | 1    | 50  | ✔️ Complete   | Logical bin counts     |
 | PMR    | 1    | 60  | ✔️ Complete   | Pin mapping            |
-| PGR    | 1    | 62  | ⚠️ Incomplete | Pin grouping           |
-| PLR    | 1    | 63  | ⚠️ Incomplete | Pin display properties |
-| RDR    | 1    | 70  | ⚠️ Incomplete | Retest info            |
+| PGR    | 1    | 62  | ✔️ Complete   | Pin grouping           |
+| PLR    | 1    | 63  | ✔️ Complete   | Pin display properties |
+| RDR    | 1    | 70  | ✔️ Complete   | Retest info            |
 | SDR    | 1    | 80  | ✔️ Complete   | Site configuration     |
 | WIR    | 2    | 10  | ✔️ Complete   | Wafer start marker     |
 | WRR    | 2    | 20  | ✔️ Complete   | Wafer summary          |
@@ -140,7 +142,7 @@ These classes handle type conversion, byte parsing, and STDF serialization, ensu
 | BPS    | 20   | 10  | ✔️ Complete   | Program section start  |
 | EPS    | 20   | 20  | ✔️ Complete   | Program section end    |
 | GDR    | 50   | 10  | ⚠️ Incomplete | User-defined data      |
-| DTR    | 50   | 30  | ⚠️ Incomplete | Datalog comments       |
+| DTR    | 50   | 30  | ✔️ Complete   | Datalog comments       |
 
 ---
 

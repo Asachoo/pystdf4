@@ -42,7 +42,7 @@ class R_8(DeferredField[float]):
 # ============================================================
 
 
-class C_1(ImmediateField):
+class C_1(ImmediateField[str]):
     field_size = 1
 
     @staticmethod
@@ -50,7 +50,7 @@ class C_1(ImmediateField):
         return value.encode("ascii")
 
 
-class C_12(ImmediateField):
+class C_12(ImmediateField[str]):
     field_size = 12
 
     @staticmethod
@@ -58,7 +58,7 @@ class C_12(ImmediateField):
         return value.encode("ascii")
 
 
-class B_1(ImmediateField):
+class B_1(ImmediateField[bytes]):
     field_size = 1
 
     @staticmethod
@@ -66,7 +66,7 @@ class B_1(ImmediateField):
         return value
 
 
-class B_6(ImmediateField):
+class B_6(ImmediateField[bytes]):
     field_size = 6
 
     @staticmethod
@@ -74,19 +74,19 @@ class B_6(ImmediateField):
         return value
 
 
-class C_n(ImmediateField):
+class C_n(ImmediateField[str]):
     @staticmethod
     def _normalize_value(value: str, size: int = 0) -> bytes:
         return ImmediateField._pascal_bytes(value.encode("ascii"))
 
 
-class B_n(ImmediateField):
+class B_n(ImmediateField[bytes]):
     @staticmethod
     def _normalize_value(value: bytes, size: int = 0) -> bytes:
         return ImmediateField._pascal_bytes(value)
 
 
-class C_f(ImmediateField):
+class C_f(ImmediateField[str]):
     @staticmethod
     def _normalize_value(value: bytes, size: int = 0) -> bytes:
         return ImmediateField._left_justified_bytes(value, size, b" ")
