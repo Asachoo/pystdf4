@@ -13,11 +13,8 @@ class Stdf4Writer(StdfIOBase):
         return super().__enter__()
 
     def __exit__(self, exc_type: type, exc_val: Exception, exc_tb: object) -> None:
-        self.file_path.write_bytes(self.to_bytes())
-
-    def to_bytes(self) -> bytes:
         self.write_buffers()
-        return self.buffer.to_bytes()
+        self.file_path.write_bytes(self.buffer.to_bytes())
 
     def write_fields(self, rec_typ: int, rec_sub: int, field_writer: Callable):
         # Step 1: Write the header of the record
