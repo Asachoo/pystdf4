@@ -46,3 +46,9 @@ class StdfIOBase:
         self.C_n = C_n()
 
         self.header_packer: Struct = Struct("<HBB")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type: type, exc_val: Exception, exc_tb: object):
+        raise NotImplementedError()

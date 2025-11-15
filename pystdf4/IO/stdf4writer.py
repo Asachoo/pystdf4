@@ -3,9 +3,17 @@ from typing import Any, Callable, Literal, Optional, Sequence, Tuple
 from .base import StdfIOBase
 
 
-class Stfd4Writer(StdfIOBase):
+class Stdf4Writer(StdfIOBase):
     def __init__(self, file_path: str):
         super().__init__(file_path)
+
+    def __enter__(self) -> "Stdf4Writer":
+        if not self.file_path.exists():
+            self.file_path.touch()
+        return super().__enter__()
+
+    def __exit__(self, exc_type: type, exc_val: Exception, exc_tb: object) -> None:
+        self.file_path.write_bytes(self.to_bytes())
 
     def to_bytes(self) -> bytes:
         self.write_buffers()
@@ -21,7 +29,9 @@ class Stfd4Writer(StdfIOBase):
         # Step 3: Update the length of the record
         record_end = self.buffer.offset
         record_length = record_end - (record_start + 4)
-        self.buffer._mv[record_start : record_start + 2] = record_length.to_bytes(2, byteorder="little")
+        self.buffer._mv[record_start : record_start + 2] = record_length.to_bytes(
+            2, byteorder="little"
+        )
 
     def _write_header(self, header: Tuple[int, int]) -> int:
         """
@@ -35,7 +45,16 @@ class Stfd4Writer(StdfIOBase):
         return start
 
     def write_buffers(self):
-        for scalar_field in (self.U_1, self.U_2, self.U_4, self.I_1, self.I_2, self.I_4, self.R_4, self.R_8):
+        for scalar_field in (
+            self.U_1,
+            self.U_2,
+            self.U_4,
+            self.I_1,
+            self.I_2,
+            self.I_4,
+            self.R_4,
+            self.R_8,
+        ):
             scalar_field.flush_cache_to_buffer(self.buffer)
 
     def ATR(self, MOD_TIM: int, CMD_LINE: str):
@@ -166,7 +185,9 @@ class Stfd4Writer(StdfIOBase):
             "9",
             " ",
         ] = " ",
-        RTST_COD: Literal["Y", "N", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "] = " ",
+        RTST_COD: Literal[
+            "Y", "N", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "
+        ] = " ",
         PROT_COD: str = " ",
         BURN_TIM: int = 65535,
         CMOD_COD: str = " ",
