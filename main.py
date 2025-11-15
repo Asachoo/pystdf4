@@ -7,7 +7,7 @@ from itertools import zip_longest
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from pystdf4.IO import Stfd4Writer
+from pystdf4.IO import Stdf4Writer
 
 
 def parse_test_data_segment(test_data_segment: List[str]) -> Tuple[float, ...]:
@@ -116,7 +116,9 @@ class PTR_D:
         # test_pass may be True, False or None
         # if test_pass is None, it means test_flg should be calculated based on lo_limit, hi_limit and result
         # if test_pass in True or False, directly set test_flg based on test_pass
-        test_pass = test_pass if test_pass is not None else (lo_limit <= result <= hi_limit)
+        test_pass = (
+            test_pass if test_pass is not None else (lo_limit <= result <= hi_limit)
+        )
         self.test_flag = 0
         if not test_pass:
             self.test_flag |= 1 << 7
@@ -327,7 +329,11 @@ class StdfGenerator:
             ),
             start=1,
         ):
-            test_pass = test_txt not in moving_limit_set if self.pat_item_pattern.match(test_txt) else None
+            test_pass = (
+                test_txt not in moving_limit_set
+                if self.pat_item_pattern.match(test_txt)
+                else None
+            )
             ptr = PTR_D(
                 test_number=i,
                 result=result,
@@ -375,9 +381,8 @@ class StdfGenerator:
         wafer_id: str,
         lot_id: str,
     ):
-        with open(stdf_file_path, "wb") as f:
-            stdf = Stfd4Writer("")
-            # write FAR record
+        # with open(stdf_file_path, "wb") as f:
+        with Stdf4Writer(str(stdf_file_path)) as stdf:
             # stdf.write_record(FAR(CPU_TYPE=2, STDF_VER=4))
             stdf.FAR(CPU_TYPE=2, STDF_VER=4)
 
@@ -478,8 +483,6 @@ class StdfGenerator:
 
             # write MRR record
             stdf.MRR(FINISH_T=finish_time)
-
-            f.write(stdf.to_bytes())
 
 
 def convert_csv_to_stdf(

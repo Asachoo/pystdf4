@@ -1,4 +1,4 @@
 from .stdf4reader import Stdf4Reader
-from .stfd4write import Stfd4Writer
+from .stdf4writer import Stdf4Writer
 
-__all__ = ["Stdf4Reader", "Stfd4Writer"]
+__all__ = ["Stdf4Reader", "Stdf4Writer"]
