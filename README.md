@@ -22,28 +22,31 @@ Support for **STDF file parsing (reader API)** is actively under development and
 
 ## 📘 STDF4 Data Type Codes
 
-The **Standard Test Data Format (STDF)** specification defines compact type codes to describe how values are stored and interpreted within records.
-Each type code corresponds to a C data type, defining the byte layout and valid range of values.
+The **Standard Test Data Format (STDF)** specification defines a compact set of type codes that describe how values are stored and interpreted within records.
+Each type code corresponds to a C data type and specifies its binary layout, size, and valid range.
 
-| Code     | Description                                  | C Type Specifier | Notes                                                                    |
-| :------- | :------------------------------------------- | :--------------- | :----------------------------------------------------------------------- |
-| `C*1`    | Fixed-length character string (1 characters) | `char[1]`        | Left-justified; pad with spaces if shorter than 12 characters.           |
-| `C*n`    | Variable-length character string             | `char[]`         | First byte stores the length (0–255).                                    |
-| `C*f`    | Variable-length string with external length  | `char[]`         | Length determined by another record field.                               |
-| `U*1`    | 1-byte unsigned integer                      | `unsigned char`  | Range: 0–255                                                             |
-| `U*2`    | 2-byte unsigned integer                      | `unsigned short` | Range: 0–65,535                                                          |
-| `U*4`    | 4-byte unsigned integer                      | `unsigned long`  | Range: 0–4,294,967,295                                                   |
-| `I*1`    | 1-byte signed integer                        | `char`           | Range: –128 to 127                                                       |
-| `I*2`    | 2-byte signed integer                        | `short`          | Range: –32,768 to 32,767                                                 |
-| `I*4`    | 4-byte signed integer                        | `long`           | Range: –2,147,483,648 to 2,147,483,647                                   |
-| `R*4`    | 4-byte floating-point number (IEEE 754)      | `float`          | Standard single-precision float                                          |
-| `R*8`    | 8-byte floating-point number (IEEE 754)      | `double`         | Standard double-precision float                                          |
-| `B*1`    | Fixed-length binary field (1 bytes)          | `char[1]`        | Raw binary data                                                          |
-| `V*n`    | Variable-type field                          | —                | First byte = type code, followed by up to 255 bytes of data              |
-| `B*n`    | Variable-length binary field                 | `char[]`         | First byte = byte count (0–255); data starts at LSB of second byte       |
-| `D*n`    | Variable-length bit field                    | `char[]`         | First two bytes = bit count (0–65,535); unused bits in last byte = 0     |
-| `N*1`    | Nibble (4-bit) data                          | `char`           | Stores unsigned integers in 4-bit units; high nibble zeroed if odd count |
-| `kxTYPE` | Array of specified data type                 | `TYPE[]`         | Length `k` determined by another record field (e.g. `kxU*2`)             |
+For a complete and authoritative description of all STDF v4 data types, please refer to the official STDF specification included in this repository (pystdf4/doc/stdf-spec.pdf).
+The type code definitions summarized below correspond to the material on page 10 of the specification.
+
+| Code     | Description                                   | C Type Specifier | Notes                                                                    |
+| :------- | :-------------------------------------------  | :--------------- | :----------------------------------------------------------------------- |
+| `C*12`   | Fixed-length character string (12 characters) | `char[12]`       | Left-justified; pad with spaces if shorter than 12 characters.           |
+| `C*n`    | Variable-length character string              | `char[]`         | First byte stores the length (0–255).                                    |
+| `C*f`    | Variable-length string with external length   | `char[]`         | Length determined by another record field.                               |
+| `U*1`    | 1-byte unsigned integer                       | `unsigned char`  | Range: 0–255                                                             |
+| `U*2`    | 2-byte unsigned integer                       | `unsigned short` | Range: 0–65,535                                                          |
+| `U*4`    | 4-byte unsigned integer                       | `unsigned long`  | Range: 0–4,294,967,295                                                   |
+| `I*1`    | 1-byte signed integer                         | `char`           | Range: –128 to 127                                                       |
+| `I*2`    | 2-byte signed integer                         | `short`          | Range: –32,768 to 32,767                                                 |
+| `I*4`    | 4-byte signed integer                         | `long`           | Range: –2,147,483,648 to 2,147,483,647                                   |
+| `R*4`    | 4-byte floating-point number (IEEE 754)       | `float`          | Standard single-precision float                                          |
+| `R*8`    | 8-byte floating-point number (IEEE 754)       | `double`         | Standard double-precision float                                          |
+| `B*6`    | Fixed-length binary field (6 bytes)           | `char[6]`        | Raw binary data                                                          |
+| `V*n`    | Variable-type field                           | —                | First byte = type code, followed by up to 255 bytes of data              |
+| `B*n`    | Variable-length binary field                  | `char[]`         | First byte = byte count (0–255); data starts at LSB of second byte       |
+| `D*n`    | Variable-length bit field                     | `char[]`         | First two bytes = bit count (0–65,535); unused bits in last byte = 0     |
+| `N*1`    | Nibble (4-bit) data                           | `char`           | Stores unsigned integers in 4-bit units; high nibble zeroed if odd count |
+| `kxTYPE` | Array of specified data type                  | `TYPE[]`         | Length `k` determined by another record field (e.g. `kxU*2`)             |
 
 ---
 
