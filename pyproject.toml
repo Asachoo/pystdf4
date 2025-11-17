@@ -1,6 +1,6 @@
 [project]
 name = "pystdf4"
-version = "0.1.1"
+version = "0.1.2"
 authors = [{ name = "YQZhu", email = "asa_choo@hotmail.com" }]
 description = "A Python library for reading and writing STDF4 files"
 license = { file = "LICENSE" }
